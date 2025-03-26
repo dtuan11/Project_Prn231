@@ -1,0 +1,305 @@
+﻿@page
+@model WebApp.Pages.Chapter.ChapterListModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="~/css/vendor/simple-datatables/style.css" rel="stylesheet">
+    <link href="~/css/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .table td {
+            width: 20%; /* Đặt chiều rộng 20% cho mỗi cột */
+        }
+
+        .detail {
+            /* Điều chỉnh kích cỡ nội dung trong cột Detail */
+            font-size: 13px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0px !important;
+            left: 0;
+            bottom: 0;
+            width: 300px;
+            z-index: 996;
+            transition: all 0.3s;
+            padding: 20px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #aab7cf transparent;
+            box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+            background-color: #fff;
+        }
+
+        /* .header {
+                    transition: all 0.5s;
+                    z-index: 997;
+                    height: 0px !important;
+                    box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
+                    background-color: #fff;
+                    padding-left: 20px;
+                } */
+    </style>
+    <link rel="stylesheet" href="~/css/app.css">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/vendor/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+    <header class="header d-none d-lg-block">
+        <!-- place navbar here -->
+        <nav class="navbar navbar-expand-lg navbar-dark header__navbar p-md-0">
+            <div class="container">
+                <a class="navbar-brand" asp-page="/Homepage/Index">
+                    <img src="~/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
+                         style="width: 200px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Thể loại
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-custom">
+                                @{
+
+                                    foreach (var cate in Model.Categories)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-page="/Homepage/Category" asp-route-id="@cate.CateId">
+                                                @cate.Name
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Theo số chương
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-custom">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        Dưới
+                                        100
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        100
+                                        - 500
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        500
+                                        - 1000
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        Trên
+                                        1000
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @{
+                            var userId = @Model.UserId;
+                        }
+                        @{
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                var id = int.Parse(userId);
+                                <li class="nav-item-a" style="margin-left:190px">
+                                    <a class="nav-link" href="logout">Logout</a>
+                                </li>
+                                <li style="margin-left: 1cm" class="nav-item-a">
+                                    <a class="nav-link" asp-page="/Profile/Index" asp-route-id="@id">
+                                        Tài khoản
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item-a" style="margin-left:190px">
+                                    <a class="nav-link" asp-page="/Login/Index">Login</a>
+                                </li>
+                            }
+                        }
+
+                    </ul>
+
+                    <form class="d-flex header__form-search" action="" method="GET">
+                        <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word"
+                               value="">
+                        <div class="col-12 search-result shadow no-result d-none">
+                            <div class="card text-white bg-light">
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush d-none">
+                                        <li class="list-group-item">
+                                            <a href="#" class="text-dark hover-title">Tự cẩm</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                                 viewBox="0 0 512 512">
+                                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z">
+                                </path>
+                            </svg>
+
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <aside style="margin-top: 80px" id="sidebar" class="sidebar">
+
+        <ul class="sidebar-nav" id="sidebar-nav">
+
+            <li class="nav-item">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link " asp-page="/Profile/Index" asp-route-id="@(int.Parse(HttpContext.Session.GetString("userId")))">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Profile/Book">
+                    <i class="bi bi-envelope"></i>
+                    <span>Ðăng truyện</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Book/ManageBook">
+                    <i class="bi bi-envelope"></i>
+                    <span>Danh sách truyện</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Book/ManageChapter">
+                    <i class="bi bi-envelope"></i>
+                    <span>Quản lý chapter</span>
+                </a>
+            </li>
+            @if (Model.user.RoleId == 0)
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-page="/Account/ManagerAccount">
+                        <i class="bi bi-envelope"></i>
+                        <span>Quản lý Tài Khoản</span>
+                    </a>
+                </li>
+            }
+            @{
+                if (Model.user.RoleId == 0)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-page="/Profile/ViewStatistic">
+                            <i class="bi bi-envelope"></i>
+                            <span>Xem thống kê lượt đọc</span>
+                        </a>
+                    </li>
+                }
+            }@{
+                if (Model.user.RoleId == 0)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-page="/Profile/ViewStatisticUserBookView">
+                            <i class="bi bi-envelope"></i>
+                            <span>Xem thống kê lượt tổng lượt đọc của người đăng</span>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </aside>
+    <main style="margin-top: 4px" id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>List chapter</h1>
+        </div>
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Chương</th>
+                                        <th>Tên chương</th>
+                                        <th>Số chữ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        foreach (var chap in Model.Chapters)
+                                        {
+
+                                            <tr>
+                                                <td class="listnumberchap">
+                                                    @chap.NumberChapter <br>
+                                                    <a asp-page="/Chapter/EditChapter" asp-route-id="@chap.ChapterId" class="btn btn-secondary btn-sm mb-1 mr-md-1">Sửa Chương</a>
+                                                    <a asp-page="/Homepage/Chapter" asp-route-id="@chap.ChapterId" asp-route-bookId="@chap.BookId" class="btn btn-secondary btn-sm mb-1 mr-md-1">Xem chương</a>
+                                                    <a href="javascript:void(0);" onclick="confirmDelete(@chap.ChapterId)" class="btn btn-secondary btn-sm mb-1 mr-md-1">Xóa</a>
+                                                </td>
+                                                <td class="listnamechap">@chap.ChapterName</td>
+                                                <td class="countwords">@Model.CountWords[chap.ChapterId]</td>
+                                            </tr>
+                                        }
+                                    }
+                                    <script>
+                                        function confirmDelete(chapterId) {
+                                            if (confirm("Bạn có muốn xóa chapter này ?")) {
+                                                // Nếu người dùng đồng ý xóa, chuyển hướng đến trang xóa với id của sách
+                                                window.location.href = "DeleteChapter?id=" + chapterId;
+                                            }
+                                        }
+                                    </script>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script src="~/css/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="~/css/vendor/tinymce/tinymce.min.js"></script>
+    <script src="~/js/main.js"></script>
+    <script src="~/css/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="~/css/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/css/vendor/chart.js/chart.umd.js"></script>
+    <script src="~/css/vendor/echarts/echarts.min.js"></script>
+    <script src="~/css/vendor/quill/quill.min.js"></script>
+    <script src="~/css/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="~/css/vendor/tinymce/tinymce.min.js"></script>
+    <script src="~/css/vendor/php-email-form/validate.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+﻿@page
+@model WebApp.Pages.Chapter.EditChapterModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="utf-8">
+    <title>My List Comic</title>
+    <link href="~/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/css/vendor/css/style.css" rel="stylesheet">
+    <style>
+        label {
+            margin-right: 30px;
+        }
+    </style>
+</head>
+<body>
+    <aside style="margin-top: 80px" id="sidebar" class="sidebar">
+
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                <span><a href="#">Quay về trang chủ</a></span>
+            </li>
+            <li class="nav-item">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/Profile/Index" asp-route-id="@(int.Parse(HttpContext.Session.GetString("userId")))">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Profile/Book">
+                    <i class="bi bi-envelope"></i>
+                    <span>Ðăng truyện</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Book/ManageBook">
+                    <i class="bi bi-envelope"></i>
+                    <span>Danh sách truyện</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Book/ManageChapter">
+                    <i class="bi bi-envelope"></i>
+                    <span>Quản lý chapter</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <main style="margin-top: 4px" id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Sửa chương</h1>
+            <h2><a asp-page="/Chapter/ChapterList" asp-route-id="@Model.Chapter.BookId"></a></h2>
+        </div><!-- End Page Title -->
+
+        <section class="section contact">
+            <div>
+                <div class="card p-4">
+                    <form method="post">
+                        <input type="hidden" asp-for="@Model.Chapter.BookId" />
+                        <input type="hidden" asp-for="@Model.Chapter.ChapterId" />
+                        <div class="row gy-4">
+                            <div class="col-md-12">
+                                Chương số
+                                <input asp-for="@Model.Chapter.NumberChapter" class="form-control" min="1" type="number" readonly>
+                                <div style="font-size: 13px">
+                                    @if (!string.IsNullOrEmpty(Model.Message))
+                                    {
+                                        <div class="alert alert-warning">
+                                            @Model.Message
+                                        </div>
+                                    }
+                                </div>
+                                <div style="font-size: 13px">
+                                </div>
+
+                                <div class="col-md-12">
+                                    Tên chương
+                                    <!--<input name="namechapter" class="form-control" value="${namechapter}"  type="text">-->
+                                    <textarea class="form-control" asp-for="@Model.Chapter.ChapterName" rows="1" required></textarea>
+                                    <div style="font-size: 13px">
+                                        Không nên thêm cụm "Chương XX" vào tiêu đề này.
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    Nội dung
+                                    <!--<input name="content" class="form-control" value="${content}"  type="text">-->
+
+                                    <textarea class="form-control" name="content" rows="10" minlength="100" required>@Model.Chapter.Contents1 + @Model.Chapter.Contents2</textarea>
+                                    <div style="font-size: 13px">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" style="background-color: #4154f1; color: #fff;
+                                                padding: 10px 20px 10px 20px; border: none; border-radius: 5px">
+                                        Update
+                                    </button>
+                                    <button type="reset" style="background-color: #4154f1; color: #fff;
+                                                padding: 10px 20px 10px 20px; border: none; border-radius: 5px">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="~/css/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="~/css/vendor/tinymce/tinymce.min.js"></script>
+    <script src="~/js/main.js"></script>
+    <script src="~/css/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="~/css/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/css/vendor/chart.js/chart.umd.js"></script>
+    <script src="~/css/vendor/echarts/echarts.min.js"></script>
+    <script src="~/css/vendor/quill/quill.min.js"></script>
+    <script src="~/css/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="~/css/vendor/tinymce/tinymce.min.js"></script>
+    <script src="~/css/vendor/php-email-form/validate.js"></script>
+</body>
+
+</html>

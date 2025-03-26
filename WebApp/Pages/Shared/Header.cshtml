@@ -1,0 +1,167 @@
+﻿@* @page
+@model WebApp.Pages.Shared.HeaderModel
+@{
+} *@
+@using Microsoft.AspNetCore.Http
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+
+
+    <!-- Bootstrap CSS v5.2.1 -->
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="https://suustore.com/assets/frontend/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/css/app.css">
+
+
+
+    <script>
+        window.SuuTruyen = {
+            baseUrl: 'https://suustore.com',
+            urlCurrent: 'https://suustore.com',
+            csrfToken: '4EebYu2rWivdRk1ET12dyuY0CJjpRERhJynPtvUy'
+        }
+    </script>
+
+    <title>Demo Truyện</title>
+    <meta name="description"
+          content="Đọc truyện online, truyện hay. Demo Truyện luôn tổng hợp và cập nhật các chương truyện một cách nhanh nhất.">
+</head>
+<body>
+    <header class="header d-none d-lg-block">
+        <!-- place navbar here -->
+        <nav class="navbar navbar-expand-lg navbar-dark header__navbar p-md-0">
+            <div class="container">
+                <a class="navbar-brand" asp-page="/Homepage/Index">
+                    <img src="~/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
+                         style="width: 200px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Thể loại
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-custom">
+                                @{
+
+                                    foreach (var cate in Model.Categories)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-page="/Homepage/Category" asp-route-id="@cate.CateId">
+                                                @cate.Name
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Theo số chương
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-custom">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        Dưới
+                                        100
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        100
+                                        - 500
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        500
+                                        - 1000
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        Trên
+                                        1000
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @{
+                            var userId = @Model.UserId;
+                        }
+                        @{
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                var id = int.Parse(userId);
+                                <li class="nav-item-a" style="margin-left:190px">
+                                    <a class="nav-link" asp-page="/Login/Logout">Logout</a>
+                                </li>
+                                <li style="margin-left: 1cm" class="nav-item-a" > 
+                                    <a class="nav-link" asp-page="/Profile/Index" asp-route-id="@id">
+                                        Tài khoản
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item-a" style="margin-left:190px">
+                                    <a class="nav-link" asp-page="/Login/Index">Login</a>
+                                </li>
+                            }
+                        }
+
+                    </ul>
+
+                    <form class="d-flex header__form-search" asp-page="/Homepage/Search" method="get">
+                        <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word"
+                               value="">
+                        <div class="col-12 search-result shadow no-result d-none">
+                            <div class="card text-white bg-light">
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush d-none">
+                                        <li class="list-group-item">
+                                            <a href="#" class="text-dark hover-title">Tự cẩm</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                                 viewBox="0 0 512 512">
+                                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z">
+                                </path>
+                            </svg>
+
+                        </button> 
+                    </form>
+
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>

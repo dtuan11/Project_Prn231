@@ -1,0 +1,588 @@
+﻿@page 
+@model WebApp.Pages.Homepage.BookDetailModel
+@{
+}
+<!DOCTYPE html>
+<!-- saved from url=(0021)https://suustore.com/ -->
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+
+
+    <!-- Bootstrap CSS v5.2.1 -->
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="https://suustore.com/assets/frontend/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/css/app.css">
+
+
+
+    <script>
+        window.SuuTruyen = {
+            baseUrl: 'https://suustore.com',
+            urlCurrent: 'https://suustore.com',
+            csrfToken: '4EebYu2rWivdRk1ET12dyuY0CJjpRERhJynPtvUy'
+        }
+    </script>
+
+    <title>Demo Truyện</title>
+    <meta name="description"
+          content="Đọc truyện online, truyện hay. Demo Truyện luôn tổng hợp và cập nhật các chương truyện một cách nhanh nhất.">
+</head>
+
+<body>
+
+    <div class="header-mobile d-sm-block d-lg-none">
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">
+                    <img src="~/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
+                         style="width: 200px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="offcanvas offcanvas-end text-bg-dark w-75" tabindex="-1" id="offcanvasDarkNavbar"
+                     aria-labelledby="offcanvasDarkNavbarLabel">
+                    <div class="offcanvas-header">
+                        <img src="~/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
+                             style="width: 200px;">
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 mb-3">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="https://suustore.com/#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Thể loại
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-custom">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            Mạt
+                                            Thế
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <div class="form-check form-switch d-flex align-items-center mb-3 p-0">
+                            <label class="form-check-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                     class="bi bi-brightness-high" viewBox="0 0 16 16" style="fill: #fff;">
+                                    <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z">
+                                    </path>
+                                </svg>
+                            </label>
+                            <input class="form-check-input theme_mode" type="checkbox"
+                                   style="transform: scale(1.3); margin-left: 12px; margin-right: 12px;">
+
+                            <label class="form-check-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 384 512"
+                                     style="fill: #fff;">
+                                    <path d="M144.7 98.7c-21 34.1-33.1 74.3-33.1 117.3c0 98 62.8 181.4 150.4 211.7c-12.4 2.8-25.3 4.3-38.6 4.3C126.6 432 48 353.3 48 256c0-68.9 39.4-128.4 96.8-157.3zm62.1-66C91.1 41.2 0 137.9 0 256C0 379.7 100 480 223.5 480c47.8 0 92-15 128.4-40.6c1.9-1.3 3.7-2.7 5.5-4c4.8-3.6 9.4-7.4 13.9-11.4c2.7-2.4 5.3-4.8 7.9-7.3c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-3.7 .6-7.4 1.2-11.1 1.6c-5 .5-10.1 .9-15.3 1c-1.2 0-2.5 0-3.7 0c-.1 0-.2 0-.3 0c-96.8-.2-175.2-78.9-175.2-176c0-54.8 24.9-103.7 64.1-136c1-.9 2.1-1.7 3.2-2.6c4-3.2 8.2-6.2 12.5-9c3.1-2 6.3-4 9.6-5.8c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-3.6-.3-7.1-.5-10.7-.6c-2.7-.1-5.5-.1-8.2-.1c-3.3 0-6.5 .1-9.8 .2c-2.3 .1-4.6 .2-6.9 .4z">
+                                    </path>
+                                </svg>
+                            </label>
+                        </div>
+
+                        <form class="d-flex header__form-search" action="" method="GET">
+                            <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word"
+                                   value="">
+                            <div class="col-12 search-result shadow no-result d-none">
+                                <div class="card text-white bg-light">
+                                    <div class="card-body p-0">
+                                        <ul class="list-group list-group-flush d-none">
+                                            <li class="list-group-item">
+                                                <a href="#" class="text-dark hover-title">
+                                                    Tự
+                                                    cẩm
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                                     viewBox="0 0 512 512">
+                                    d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z">
+                                    </>
+                                </svg>
+
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="bg-light header-bottom">
+        <div class="container py-1">
+            <p class="mb-0">
+                Đọc truyện online, đọc truyện chữ, truyện full, truyện hay. Tổng hợp đầy đủ và cập nhật liên
+                tục.
+            </p>
+        </div>
+    </div>
+
+
+    <main>
+
+        <input type="hidden" id="story_slug" value="nang-khong-muon-lam-hoang-hau">
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col-12 col-md-7 col-lg-8">
+                    <div class="head-title-global d-flex justify-content-between mb-4">
+                        <div class="col-12 col-md-12 col-lg-4 head-title-global__left d-flex">
+                            <h2 class="me-2 mb-0 border-bottom border-secondary pb-1">
+                                <span class="d-block text-decoration-none text-dark fs-4 title-head-name"
+                                      title="Thông tin truyện">
+                                    Thông
+                                    tin truyện
+                                </span>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="story-detail">
+                        <div class="story-detail__top d-flex align-items-start">
+                            <div class="row align-items-start">
+                                <div class="col-12 col-md-12 col-lg-3 story-detail__top--image">
+                                    <div class="book-3d">
+                                        <img id="book-img" class="img-fluid w-100" width="200" height="300" loading="lazy">
+                                    </div>
+                                    <!-- Report Button with SVG Icon -->
+                                    <a id="report-link" class="d-flex align-items-center mt-2">
+                                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4 1C3.44772 1 3 1.44772 3 2V22C3 22.5523 3.44772 23 4 23C4.55228 23 5 22.5523 5 22V13.5983C5.46602 13.3663 6.20273 13.0429 6.99251 12.8455C8.40911 12.4914 9.54598 12.6221 10.168 13.555C11.329 15.2964 13.5462 15.4498 15.2526 15.2798C17.0533 15.1004 18.8348 14.5107 19.7354 14.1776C20.5267 13.885 21 13.1336 21 12.3408V5.72337C21 4.17197 19.3578 3.26624 18.0489 3.85981C16.9875 4.34118 15.5774 4.87875 14.3031 5.0563C12.9699 5.24207 12.1956 4.9907 11.832 4.44544C10.5201 2.47763 8.27558 2.24466 6.66694 2.37871C6.0494 2.43018 5.47559 2.53816 5 2.65249V2C5 1.44772 4.55228 1 4 1ZM5 4.72107V11.4047C5.44083 11.2247 5.95616 11.043 6.50747 10.9052C8.09087 10.5094 10.454 10.3787 11.832 12.4455C12.3106 13.1634 13.4135 13.4531 15.0543 13.2897C16.5758 13.1381 18.1422 12.6321 19 12.3172V5.72337C19 5.67794 18.9081 5.66623 18.875 5.68126C17.7575 6.18804 16.1396 6.81972 14.5791 7.03716C13.0776 7.24639 11.2104 7.1185 10.168 5.55488C9.47989 4.52284 8.2244 4.25586 6.83304 4.3718C6.12405 4.43089 5.46427 4.58626 5 4.72107Z" fill="#0F0F0F" />
+                                        </svg>
+                                        <span> Báo cáo</span>
+                                    </a>
+                                </div>
+                                <div class="col-12 col-md-12 col-lg-9">
+                                    <h3 id="book-title" class="text-center story-name"></h3>                                    <div class="rate-story mb-2">
+                                        <div class="rate-story mb-2">
+                                            <div class="rate-story__holder" id="rate-stars"></div>
+                                            <em class="rate-story__text"></em>
+                                            <div class="rate-story__value" itemprop="aggregateRating" itemscope="" itemtype="https://schema.org/AggregateRating">
+                                                <em>
+                                                    Đánh giá:
+                                                    <strong><span id="rate-point" itemprop="ratingValue"></span></strong>
+                                                    /
+                                                    <span class="" itemprop="bestRating">5</span>
+                                                    từ
+                                                    <strong><span id="rate-time" itemprop="ratingCount"></span> lượt</strong>
+                                                </em>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="story-detail__top--desc px-3" style="max-height: 285px;" id="book-detail"></div>
+
+                                    <div class="info-more">
+                                        <div class="info-more--more active" id="info_more">
+                                            <span class="me-1 text-dark">Xem thêm</span>
+                                            <svg width="14" height="8" viewBox="0 0 14 8" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7.70749 7.70718L13.7059 1.71002C14.336 1.08008 13.8899 0.00283241 12.9989 0.00283241L1.002 0.00283241C0.111048 0.00283241 -0.335095 1.08008 0.294974 1.71002L6.29343 7.70718C6.68394 8.09761 7.31699 8.09761 7.70749 7.70718Z"
+                                                      fill="#2C2C37"></path>
+                                            </svg>
+                                        </div>
+
+                                        <a class="info-more--collapse text-decoration-none"
+                                           href="#info_more">
+                                            <span class="me-1 text-dark">Thu gọn</span>
+                                            <svg width="14" height="8" viewBox="0 0 14 8" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7.70749 0.292817L13.7059 6.28998C14.336 6.91992 13.8899 7.99717 12.9989 7.99717L1.002 7.99717C0.111048 7.99717 -0.335095 6.91992 0.294974 6.28998L6.29343 0.292817C6.68394 -0.097606 7.31699 -0.0976055 7.70749 0.292817Z"
+                                                      fill="#2C2C37"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="story-detail__bottom mb-3">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-3 story-detail__bottom--info">
+                                    <p class="mb-1">
+                                        <strong>Tác giả:</strong>
+                                        <a href="#"
+                                           class="text-decoration-none text-dark hover-title">Thâm Bích Sắc</a>
+                                    </p>
+                                    <div class="d-flex align-items-center mb-1 flex-wrap">
+                                        <strong class="me-1">Thể loại:</strong>
+                                        <div class="d-flex align-items-center flex-warp">
+                                            <a href="category.html"
+                                               class="text-decoration-none text-dark hover-title  me-1 "
+                                               style="width: max-content;">
+                                                Ngôn Tình ,
+                                            </a>
+
+
+                                            <a href="category.html"
+                                               class="text-decoration-none text-dark hover-title  me-1 "
+                                               style="width: max-content;">
+                                                Cổ Đại ,
+                                            </a>
+
+
+                                            <a href="category.html"
+                                               class="text-decoration-none text-dark hover-title  me-1 "
+                                               style="width: max-content;">
+                                                Ngược ,
+                                            </a>
+
+
+                                            <a href="category.html"
+                                               class="text-decoration-none text-dark hover-title "
+                                               style="width: max-content;">Khác </a>
+                                        </div>
+                                    </div>
+
+                                    <p class="mb-1">
+                                        <strong>Trạng thái:</strong>
+                                        <span id="book-status" class="text-info"></span>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="story-detail__list-chapter">
+                            <div class="head-title-global d-flex justify-content-between mb-4">
+                                <div class="col-6 col-md-12 col-lg-4 head-title-global__left d-flex">
+                                    <h2 class="me-2 mb-0 border-bottom border-secondary pb-1">
+                                        <span id="chapter-count" class="d-block text-decoration-none text-dark fs-4 title-head-name"></span>
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <div class="story-detail__list-chapter--list">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 col-lg-6 story-detail__list-chapter--list__item">
+                                        <ul id="chapter-list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination" style="justify-content: center;">
+                        <ul>
+                            <li class="pagination__item  page-current">
+                                <a class="page-link story-ajax-paginate"
+                                   data-url="https://suustore.com/truyen/nang-khong-muon-lam-hoang-hau?page=1"
+                                   style="cursor: pointer;">1</a>
+                            </li>
+                            <li class="pagination__item ">
+                                <a class="page-link story-ajax-paginate"
+                                   data-url="https://suustore.com/truyen/nang-khong-muon-lam-hoang-hau?page=2"
+                                   style="cursor: pointer;">2</a>
+                            </li>
+
+                            <div class="dropup-center dropup choose-paginate me-1">
+                                <button class="btn btn-success dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    Chọn trang
+                                </button>
+                                <div class="dropdown-menu">
+                                    <input type="number" class="form-control input-paginate me-1" value="">
+                                    <button class="btn btn-success btn-go-paginate">
+                                        Đi
+                                    </button>
+                                </div>
+                            </div>
+
+                            <li class="pagination__arrow pagination__item">
+                                <a data-url="https://suustore.com/truyen/nang-khong-muon-lam-hoang-hau?page=2"
+                                   style="cursor: pointer;"
+                                   class="text-decoration-none w-100 h-100 d-flex justify-content-center align-items-center story-ajax-paginate">
+                                    &gt;&gt;
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+          
+        </div>
+
+
+
+        </div>
+    </main>
+
+
+    <div id="footer" class="footer border-top pt-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-5">
+                    <strong>Suu Truyện</strong> - <a title="Đọc truyện online" class="text-dark text-decoration-none"
+                                                     href="#">Đọc truyện</a> online một cách nhanh nhất. Hỗ trợ mọi thiết bị như
+                    di
+                    động và máy tính bảng.
+                </div>
+                <ul class="col-12 col-md-7 list-unstyled d-flex flex-wrap list-tag">
+                    <li class="me-1">
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="đam mỹ hài">
+                                đam mỹ
+                                hài
+                            </a>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="truyện xuyên nhanh">
+                                truyện
+                                xuyên
+                                nhanh
+                            </a>
+                        </span>
+                    </li>
+                    <li class="me-1">
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="đam mỹ hài">
+                                đam mỹ
+                                hài
+                            </a>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="truyện xuyên nhanh">
+                                truyện
+                                xuyên
+                                nhanh
+                            </a>
+                        </span>
+                    </li>
+                    <li class="me-1">
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="đam mỹ hài">
+                                đam mỹ
+                                hài
+                            </a>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="truyện xuyên nhanh">
+                                truyện
+                                xuyên
+                                nhanh
+                            </a>
+                        </span>
+                    </li>
+                    <li class="me-1">
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="đam mỹ hài">
+                                đam mỹ
+                                hài
+                            </a>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="truyện xuyên nhanh">
+                                truyện
+                                xuyên
+                                nhanh
+                            </a>
+                        </span>
+                    </li>
+                    <li class="me-1">
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="đam mỹ hài">
+                                đam mỹ
+                                hài
+                            </a>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="truyện xuyên nhanh">
+                                truyện
+                                xuyên
+                                nhanh
+                            </a>
+                        </span>
+                    </li>
+                    <li class="me-1">
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="đam mỹ hài">
+                                đam mỹ
+                                hài
+                            </a>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="badge text-bg-light">
+                            <a class="text-dark text-decoration-none"
+                               href="#" title="truyện xuyên nhanh">
+                                truyện
+                                xuyên
+                                nhanh
+                            </a>
+                        </span>
+                    </li>
+                </ul>
+
+                <div class="col-12">
+                    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+                        <img alt="Creative Commons License" style="border-width:0;margin-bottom: 10px"
+                             src="~/images/88x31.png">
+                    </a><br>
+                    <p>
+                        Website hoạt động dưới Giấy phép truy cập mở <a rel="license"
+                                                                        class="text-decoration-none text-dark hover-title"
+                                                                        href="http://creativecommons.org/licenses/by/4.0/">
+                            Creative Commons Attribution 4.0
+                            International License
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const bookId = @Model.BookId;
+        const userId = '@Model.UserId' || '-1';
+
+        async function fetchBookDetails(id) {
+            try {
+                const response = await fetch(`https://localhost:7186/api/books/${id}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        document.body.innerHTML = '<h1>404 - Book Not Found</h1>';
+                        return;
+                    }
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const book = await response.json();
+                console.log("book:", book)
+                renderBookDetails(book);
+            } catch (error) {
+                console.error('Error fetching book details:', error);
+            }
+        }
+
+        function renderBookDetails(book) {
+            // Book Image and Report Link
+            document.getElementById('book-img').src = book.img;
+            document.getElementById('book-img').alt = book.title;
+            document.getElementById('report-link').href = `/UserReport/Index?bookId=${book.bookId}`;
+
+            // Title
+            document.getElementById('book-title').textContent = book.title;
+
+            // Rating Stars
+            const rateStars = document.getElementById('rate-stars');
+            rateStars.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('a');
+                star.href = `/Rate/Rating?point=${i}&bookId=${book.bookId}&userId=${userId}`;
+                const img = document.createElement('img');
+                img.alt = '5';
+                img.src = i <= book.ratePoint ? '/images/star-on.png' : '/images/star-off.png';
+                star.appendChild(img);
+                rateStars.appendChild(star);
+            }
+
+            // Rate Info
+            document.getElementById('rate-point').textContent = book.ratePoint || 0;
+            document.getElementById('rate-time').textContent = book.rateTime || 0;
+
+            // Description
+            document.getElementById('book-detail').textContent = book.detail;
+
+            // Status
+            document.getElementById('book-status').textContent = book.status;
+
+            // Chapters
+            document.getElementById('chapter-count').textContent = `Danh sách chương: ${book.chapters.length}`||0;
+            const chapterList = document.getElementById('chapter-list');
+            chapterList.innerHTML = '';
+            book.chapters.forEach(chapter => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `/Homepage/Chapter?id=${chapter.chapterId}&bookId=${book.bookId}`;
+                a.className = 'text-decoration-none text-dark hover-title';
+                a.textContent = `Chương ${chapter.numberChapter}: ${chapter.chapterName}`;
+                li.appendChild(a);
+                chapterList.appendChild(li);
+            });
+        }
+
+        // Fetch book details on page load
+        fetchBookDetails(bookId);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '@TempData["SuccessMessage"]'
+                    });
+            </text>
+        }
+    </script>
+   
+
+
+    </script>
+
+
+
+    <script src="~/js/app.js">
+    </script>
+    <script src="~/js/story.js"></script>
+
+
+
+    <div id="loadingPage" class="loading-full">
+        <div class="loading-full_icon">
+            <div class="spinner-grow"><span class="visually-hidden">Loading...</span></div>
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
