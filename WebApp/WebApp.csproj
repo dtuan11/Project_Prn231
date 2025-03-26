@@ -18,9 +18,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
 	</ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="C:\Users\Admin\source\repos\Project_Prn231\API\API.csproj" />
-  </ItemGroup>
+ 
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\Login.cshtml" />
@@ -37,6 +35,10 @@
     <Folder Include="wwwroot\css\vendor\font-awesome-4.7\" />
     <Folder Include="wwwroot\css\vendor\mdi-font\" />
     <Folder Include="wwwroot\css\vendor\select2\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\API\API.csproj" />
   </ItemGroup>
 
 </Project>
