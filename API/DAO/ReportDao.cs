@@ -1,5 +1,6 @@
 ﻿using API.DAO.IDAO;
 using API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.DAO
 {
@@ -10,8 +11,30 @@ namespace API.DAO
         public ReportDao(PRN221_Project_1Context context)
         {
             _context = context;
-        }       
+        }
+        public List<Report> GetAllReports()
+        {
+            return _context.Reports
+                .Include(r => r.User)
+                .Include(r => r.Book)
+                .Include(r => r.ProblemNavigation)
+                .ToList();
+        }
 
+        public Report GetReportById(int reportId)
+        {
+            return _context.Reports
+                .Include(r => r.User)
+                .Include(r => r.Book)
+                .Include(r => r.ProblemNavigation)
+                .FirstOrDefault(r => r.ReportId == reportId);
+        }
+
+        public void UpdateReport(Report report)
+        {
+            _context.Reports.Update(report);
+            _context.SaveChanges();
+        }
         public List<ReportType> GetReportTypes()
         {
             return _context.ReportTypes.ToList();

@@ -16,6 +16,36 @@ namespace API.Repositories
             _reportDao = reportDao;
             _bookDao = bookDao;
         }
+        public List<AdminReportResponse> GetAllReports()
+        {
+            var reports = _reportDao.GetAllReports();
+            return reports.Select(r => new AdminReportResponse
+            {
+                ReportId = r.ReportId,
+                UserId = r.UserId,
+                UserName = r.User.UserName,
+                BookId = r.BookId,
+                BookTitle = r.Book.Title,
+                Problem = r.ProblemNavigation.ReportType1,
+                Chapter = r.Chapter,
+                Detail = r.Detail,
+                ReplyStatus = r.ReplyStatus,
+                ReportTime = r.ReportTime
+            }).ToList();
+        }
+
+        public bool UpdateReportStatus(UpdateReportRequest request)
+        {
+            var report = _reportDao.GetReportById(request.ReportId);
+            if (report == null)
+            {
+                return false;
+            }
+
+            report.ReplyStatus = request.ReplyStatus;
+            _reportDao.UpdateReport(report);
+            return true;
+        }
         public ReportResponse GetReportFormData(int bookId)
         {
             var book = _bookDao.GetBookById(bookId);

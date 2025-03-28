@@ -7,5 +7,7 @@ namespace API.Repositories.IRepositories
     {
         ReportResponse GetReportFormData(int bookId);
         ReportResponse SubmitReport(ReportRequest request);
+        List<AdminReportResponse> GetAllReports();
+        bool UpdateReportStatus(UpdateReportRequest request);
     }
 }
