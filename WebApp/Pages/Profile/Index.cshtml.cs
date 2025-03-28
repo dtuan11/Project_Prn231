@@ -32,7 +32,7 @@ namespace WebApp.Pages.Profile
             Readings = context.Readings.Include(x=>x.Book).Include(x=>x.Chapter).Where(x=>x.UserId == id).ToList();
             user = context.Users.FirstOrDefault(x => x.UserId == int.Parse(UserId));
 
-            var exist = context.Users.Find(id);
+            var exist = context.Users.Include(u => u.Role).FirstOrDefault(x => x.UserId == id);
             if (exist != null)
             {
                 UserModel = exist;

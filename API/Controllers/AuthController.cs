@@ -58,7 +58,8 @@ namespace API.Controllers
             {
                 UserName = request.UserName,
                 Password = HashPassword(request.Password),
-                Active = true
+                Active = true,
+                RoleId = 1
             };
 
             await _userRepository.AddUserAsync(user);
