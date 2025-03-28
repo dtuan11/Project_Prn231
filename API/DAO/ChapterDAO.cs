@@ -29,9 +29,38 @@ namespace API.DAO
             _context.SaveChanges();
         }
 
+
+
         public Reading GetReading(int userId, int chapterId)
         {
             return _context.Readings.FirstOrDefault(x => x.UserId == userId && x.Chapterid == chapterId);
+        }
+
+        public List<Chapter> GetAllChapterByBookId(int bookId)
+        {
+            return _context.Chapters.Where(x=>x.BookId == bookId).ToList();
+        }
+
+        public void AddChapter(Chapter chapter)
+        {
+            _context.Chapters.Add(chapter);
+            _context.SaveChanges();
+        }
+
+        public void UpdateChapter(Chapter chapter)
+        {
+            _context.Chapters.Update(chapter);
+            _context.SaveChanges();
+        }
+
+        public void DeleteChapter(int id)
+        {
+            var exist = _context.Chapters.Find(id);
+            if (exist != null)
+            {
+                _context.Chapters.Remove(exist);
+                _context.SaveChanges();
+            }
         }
     }
 }

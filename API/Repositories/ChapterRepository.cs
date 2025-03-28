@@ -3,6 +3,7 @@ using API.DAO;
 using API.Repositories.IRepositories;
 using API.DAO.IDAO;
 using API.DTO.Response;
+using API.DTO.Request;
 
 namespace API.Repositories
 {
@@ -15,7 +16,49 @@ namespace API.Repositories
             _chapterDAO = chapterDAO;
         }
 
-       
+        public void AddChapter(AddChapterRequest request)
+        {
+            _chapterDAO.AddChapter(new Chapter
+            {
+                NumberChapter = request.NumberChapter,
+                ChapterName = request.ChapterName,
+                Contents1 = request.Contents1,
+                Contents2 = request.Contents2,
+            });
+        }
+
+        public void DeleteChapter(int chapterId)
+        {
+            _chapterDAO.DeleteChapter(chapterId);
+        }
+
+        public void EditChapter(EditChapterRequest request)
+        {
+            var chapter = new Chapter
+            {
+                ChapterId = request.ChapterId,
+                NumberChapter = request.NumberChapter,
+                Contents1 = request.Contents1,
+                Contents2 = request.Contents2,
+                ChapterName = request.ChapterName
+            };
+            _chapterDAO.UpdateChapter(chapter);
+        }
+
+        public List<ChapterDetailResponse> GetAllChapterByBookId(int bookId)
+        {
+            return _chapterDAO.GetAllChapterByBookId(bookId).Select(x=>new ChapterDetailResponse
+            {
+                ChapterId = x.ChapterId,
+                BookId = x.BookId,
+                ChapterName = x.ChapterName,
+                Contents1 = x.Contents1,
+                Contents2 = x.Contents2,
+                NumberChapter = x.NumberChapter,
+
+            }).ToList();
+        }
+
         public ChapterDetailResponse GetChapterDetails(int chapterId, int bookId, int? userId)
         {
             var chapter = _chapterDAO.GetChapterById(chapterId);

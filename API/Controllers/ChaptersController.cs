@@ -27,6 +27,11 @@ namespace API.Controllers
             }
             return Ok(chapter);
         }
+        [HttpGet("AllChapter")]
+        public IActionResult GetAllChapterByBookId([FromQuery]int bookId)
+        {
+            return Ok(_chapterRepository.GetAllChapterByBookId(bookId));
+        }
     }
 
     

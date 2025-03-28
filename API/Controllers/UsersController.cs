@@ -48,6 +48,17 @@ namespace API.Controllers
 
             return Ok(new { User = user, Readings = readings });
         }
+        [HttpGet("/userDetail/{id}")]
+        public async Task<IActionResult> GetUserDetail(int id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
 
         // PUT: api/users/{id}
         [HttpPut("{id}")]

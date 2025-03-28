@@ -1,3 +1,4 @@
+using API.DTO.Response;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,25 +7,45 @@ namespace WebApp.Pages.Chapter
 {
     public class ChapterListModel : PageModel
     {
-        private readonly PRN221_Project_1Context context;
 
-        public ChapterListModel(PRN221_Project_1Context context)
+        private readonly HttpClient _httpClient;
+        public ChapterListModel( HttpClient httpClient)
         {
-            this.context = context;
+            
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://localhost:7186");
         }
         public string? UserId { get; set; } = default!;
-        public List<Category> Categories { get; set; } = new List<Category>();
+        public List<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
 
-        public List<API.Models.Chapter> Chapters { get; set; } = new List<API.Models.Chapter>();
+        public List<ChapterDetailResponse> Chapters { get; set; } = new List<ChapterDetailResponse>();
         public Dictionary<int,int> CountWords { get; set; } = new Dictionary<int, int>();
         public User user { get; set; }
 
-        public void OnGet(int id)
+        public async Task OnGet(int id)
         {
-            Categories = context.Categories.ToList();
+            var categoriesResponse = await _httpClient.GetAsync("api/categories");
+            if (categoriesResponse.IsSuccessStatusCode)
+            {
+                Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();
+            }
+            var chaptersResponse = await _httpClient.GetAsync("api/chapters/AllChapter?bookId="+id);
+            if (chaptersResponse.IsSuccessStatusCode)
+            {
+                Chapters = await chaptersResponse.Content.ReadFromJsonAsync<List<ChapterDetailResponse>>();
+            }
+
+
+
+
+            
             UserId = HttpContext.Session.GetString("userId");
-            Chapters = context.Chapters.Where(x => x.BookId == id).ToList();
-            user = context.Users.FirstOrDefault(x => x.UserId == int.Parse(UserId));
+            //Chapters = context.Chapters.Where(x => x.BookId == id).ToList();
+            var userResponse = await _httpClient.GetAsync("userDetail/"+UserId);
+            if (userResponse.IsSuccessStatusCode)
+            {
+                user = await userResponse.Content.ReadFromJsonAsync<User>();
+            }
 
             foreach (var chapter in Chapters)
             {
