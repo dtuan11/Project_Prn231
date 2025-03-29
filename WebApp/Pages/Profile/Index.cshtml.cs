@@ -1,123 +1,95 @@
-﻿using API.Models;
+﻿using API.Controllers;
+using API.DTO.Response;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace WebApp.Pages.Profile
 {
     public class IndexModel : PageModel
     {
-        private readonly PRN221_Project_1Context context;
+        private readonly HttpClient _httpClient;
 
-        public IndexModel(PRN221_Project_1Context context)
+
+        public IndexModel(HttpClient httpClient)
         {
-            this.context = context;
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://localhost:7186");
         }
-        public List<Category> Categories { get; set; } = new List<Category>();
+
+        public List<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
         public string? UserId { get; set; } = default!;
         [BindProperty]
         public User UserModel { get; set; } = default!;
         [BindProperty]
         public IFormFile File { get; set; }
-        public List<Reading>Readings { get; set; } = new List<Reading>();
+        public List<ReadingResponse> Readings { get; set; } = new List<ReadingResponse>();
         public User user { get; set; }
 
         public string Message { get; set; } = string.Empty;
-        public void OnGet(int id)
-        {
-            Categories = context.Categories.ToList();
-            UserId = HttpContext.Session.GetString("userId");
-            Readings = context.Readings.Include(x=>x.Book).Include(x=>x.Chapter).Where(x=>x.UserId == id).ToList();
-            user = context.Users.FirstOrDefault(x => x.UserId == int.Parse(UserId));
 
-            var exist = context.Users.Find(id);
-            if (exist != null)
+        public async Task OnGetAsync(int id)
+        {         
+
+            var categoriesResponse = await _httpClient.GetAsync("api/categories");
+            if (categoriesResponse.IsSuccessStatusCode)
             {
-                UserModel = exist;
+                Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();
+            }
+            UserId = HttpContext.Session.GetString("userId");
+            var readingResponse = await _httpClient.GetAsync("api/Profile/"+UserId+"/readings");
+            if (readingResponse.IsSuccessStatusCode)
+            {
+                Readings = await readingResponse.Content.ReadFromJsonAsync<List<ReadingResponse>>();
+            }
+            var userResponse = await _httpClient.GetAsync("userDetail/" + int.Parse(UserId));
+            if (userResponse.IsSuccessStatusCode)
+            {
+                user = await userResponse.Content.ReadFromJsonAsync<User>();
+            }
+
+            
+            if (user != null)
+            {
+                UserModel = user;
             }
         }
-        public IActionResult OnPost()
-        {
 
+        public async Task<IActionResult> OnPostAsync()
+        {
             string newPassword = Request.Form["newPassword"];
             string currentPassword = Request.Form["currentPassword"];
-            if(currentPassword != null)
+            if (currentPassword != null)
             {
                 currentPassword = HashPassword(currentPassword);
             }
             string confirmPassword = Request.Form["confirmPassword"];
             string userId = Request.Form["userId"];
-            var user = context.Users.Find(int.Parse(userId));
-            if (user != null)
+            var userResponse = await _httpClient.GetAsync("userDetail/" + int.Parse(userId));
+            if (userResponse.IsSuccessStatusCode)
             {
-                if (!string.IsNullOrEmpty(newPassword))
-                {
-                    if (currentPassword.Equals(user.Password))
-                    {
-                        if (newPassword.Equals(currentPassword))
-                        {
-                            Message = "Mật khẩu mới đang trùng với mật khẩu cũ";
-                        }
-                        else if (!newPassword.Equals(confirmPassword))
-                        {
-                            Message = "Nhập lại không trùng khớp";
-                        }
-                        else
-                        {
-                            user.Password = HashPassword(newPassword);
-                            UserModel = user;
-                            context.Users.Update(user);
-                            context.SaveChanges();
-                            Message = "Đổi mật khẩu thành công";
-                        }
-                    }
-                    else
-                    {
-                        Message = "Sai mật khẩu hiện tại";
-                    }
-                }
-                else
-                {
-                    if (File != null)
-                    {
-                        
-                        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-
-                     
-                        if (!Directory.Exists(folderPath))
-                        {
-                            Directory.CreateDirectory(folderPath);
-                        }
-
-                       
-                        var filePath = Path.Combine(folderPath, File.FileName);
-
-                       
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                             File.CopyTo(stream);
-                        }
-                    }
-                    string email = Request.Form["email"];
-                    string address = Request.Form["address"];
-                    string phone = Request.Form["phone"];
-                    if (File != null)
-                    {
-                        user.Avatar = "/images/" + File.FileName;
-                    }
-                    user.Email = email;
-                    user.Address = address;
-                    user.Phone = phone;
-                    UserModel = user;
-                    context.Users.Update(user);
-                    context.SaveChanges();
-
-                }
+                user = await userResponse.Content.ReadFromJsonAsync<User>();
             }
-            
-            return RedirectToPage("/Profile/Index",new {id=user.UserId});
+            var request = new UserUpdateRequest
+            {
+                CurrentPassword = currentPassword,
+                NewPassword = newPassword,
+                ConfirmPassword = confirmPassword,
+                Email = user.Email,
+                Address = user.Address,
+                Phone = user.Phone,
+
+                
+            };
+            var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            var res = await _httpClient.PutAsync("api/users/"+user.UserId, jsonContent);
+
+            return RedirectToPage("/Profile/Index", new { id = user.UserId });
         }
 
         private string HashPassword(string password)
