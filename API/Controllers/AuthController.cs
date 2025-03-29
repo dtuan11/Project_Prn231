@@ -32,19 +32,12 @@ namespace API.Controllers
                 return BadRequest("Account is locked.");
             }
 
-            // Kiểm tra session có được lưu hay không
-            var sessionUserId = HttpContext.Session.GetString("userId");
-            Console.WriteLine($"Session UserId: {sessionUserId}"); // Debug
-
             return Ok(new
             {
-                Message = "Login Success",
+                Message = "Login Sucess",
                 UserId = user.UserId.ToString()
             });
         }
-
-
-
 
         // POST: api/auth/register
         [HttpPost("register")]
@@ -65,8 +58,7 @@ namespace API.Controllers
             {
                 UserName = request.UserName,
                 Password = HashPassword(request.Password),
-                Active = true,
-                RoleId = 1
+                Active = true
             };
 
             await _userRepository.AddUserAsync(user);
