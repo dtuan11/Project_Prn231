@@ -54,8 +54,6 @@ namespace WebApp.Pages.Profile
             }
 
 
-            var exist = context.Users.Include(u => u.Role).FirstOrDefault(x => x.UserId == id);
-            if (exist != null)
             if (user != null)
             {
                 UserModel = user;

@@ -3,46 +3,43 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace WebApp.Pages.Login
 {
     public class LoginModel : PageModel
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly PRN221_Project_1Context context;
 
-        public LoginModel(IHttpClientFactory httpClientFactory)
+        public LoginModel(PRN221_Project_1Context context)
         {
-            _httpClientFactory = httpClientFactory;
+            this.context = context;
         }
-
+        public List<Category> Categories { get; set; } = new List<Category>();
+        public string UserId { get; set; } = default!;
         [BindProperty]
-        public UserLoginRequest UserLogin { get; set; } = new();
-
+        public User UserLogin { get; set; } = default!;
         public string Message { get; set; } = string.Empty;
-
-        public void OnGet() { }
-
-        public async Task<IActionResult> OnPostAsync()
+        public void OnGet()
         {
-            var httpClient = _httpClientFactory.CreateClient();
-
-            var loginData = new
+            Categories = context.Categories.ToList();
+        }
+        public IActionResult OnPost()
+        {
+            UserLogin.Password = HashPassword(UserLogin.Password);
+            var exist = context.Users.FirstOrDefault(x => x.UserName.Equals(UserLogin.UserName)
+            && x.Password.Equals(UserLogin.Password));
+            if (exist != null)
             {
-                UserName = UserLogin.UserName,
-                Password = UserLogin.Password
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PostAsync("https://localhost:7186/api/Auth/login", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = JsonSerializer.Deserialize<LoginResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                HttpContext.Session.SetString("userId", result.UserId);
-                return RedirectToPage("/Homepage/Index");
+                if(exist.Active == false)
+                {
+                    Message = "Tài khoản đang bị khóa";
+                    return Page();
+                }
+                else
+                {
+                    HttpContext.Session.SetString("userId", exist.UserId.ToString());
+                    return RedirectToPage("/Homepage/Index");
+                }
             }
             else
             {
@@ -50,17 +47,18 @@ namespace WebApp.Pages.Login
                 return Page();
             }
         }
-    }
-
-    public class UserLoginRequest
-    {
-        public string UserName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-    public class LoginResponse
-    {
-        public string Message { get; set; } = string.Empty;
-        public string UserId { get; set; } = string.Empty;
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
     }
 }

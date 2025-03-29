@@ -1,5 +1,4 @@
-﻿using API.DTO;
-using API.Repositories.IRepositories;
+﻿using API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,102 +17,23 @@ namespace API.Controllers
         }
 
         // GET: api/users
-        /*[HttpGet]
-        public async Task<IActionResult> GetUsers()
-        {
-*//*
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }*/
-
-        /*var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
-        if (user.User == null || user.User.RoleId != 0)
-        {
-            return Forbid();
-        }*//*
-
-        var users = await _userRepository.GetAllUsersAsync();
-        return Ok(users);
-    }*/
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
+            var userId = HttpContext.Session.GetString("userId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+            if (user.User == null || user.User.RoleId != 0)
+            {
+                return Forbid();
+            }
+
             var users = await _userRepository.GetAllUsersAsync();
-
-            var userDtos = users.Select(u => new UserDto
-            {
-                UserId = u.UserId,
-                UserName = u.UserName,
-                Address = u.Address,
-                Phone = u.Phone,
-                Email = u.Email,
-                Avatar = u.Avatar,
-                RoleId = u.RoleId,
-                RoleName = u.Role != null ? u.Role.RoleName : "Unknown", 
-                Active = u.Active
-            }).ToList();
-            return Ok(userDtos);
-        }
-
-        [HttpPut("{id}/deactivate")]
-        public async Task<IActionResult> DeactivateUser(int id)
-        {
-            var user = await _userRepository.GetUserById(id);
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            user.Active = false; 
-            await _userRepository.UpdateUserAsync(user);
-
-            return Ok(new { message = "User deactivated successfully" });
-        }
-
-        [HttpPut("{id}/updaetroleadmin")]
-        public async Task<IActionResult> UpdateRoleAdmin(int id)
-        {
-            var user = await _userRepository.GetUserById(id);
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            user.RoleId = 0;
-            await _userRepository.UpdateUserAsync(user);
-
-            return Ok(new { message = "User change role to Admin successfully" });
-        }
-
-        [HttpPut("{id}/updaetroleuser")]
-        public async Task<IActionResult> UpdateRoleUser(int id)
-        {
-            var user = await _userRepository.GetUserById(id);
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            user.RoleId = 1;
-            await _userRepository.UpdateUserAsync(user);
-
-            return Ok(new { message = "User change role to Admin successfully" });
-        }
-
-        [HttpPut("{id}/activate")]
-        public async Task<IActionResult> ActivateUser(int id)
-        {
-            var user = await _userRepository.GetUserById(id);
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            user.Active = true;
-            await _userRepository.UpdateUserAsync(user);
-
-            return Ok(new { message = "User deactivated successfully" });
+            return Ok(users);
         }
 
         // GET: api/users/{id}
