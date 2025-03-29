@@ -28,6 +28,7 @@ builder.Services.AddScoped<IChapterDao, ChapterDAO>();
 builder.Services.AddScoped<UserDAO>();
 builder.Services.AddScoped<ICategoryDao, CategoryDAO>();
 builder.Services.AddScoped<IReportDao, ReportDao>();
+builder.Services.AddScoped<IStaticsDAO, StaticsDAO>();
 
 // Register Repositories
 builder.Services.AddScoped<IBookRepository, BookRepository>();
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IStaticsRepository, StaticsRepository>();
 
 
 // Swagger/OpenAPI
