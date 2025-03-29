@@ -12,6 +12,5 @@ namespace API.Repositories.IRepositories
         bool CategoryExists(int categoryId);
         List<BookResponse> SearchBooks(string keyword);
         BookDetailResponse GetBookDetailById(int id);
-        void RateBook(int point, int bookId, int userId);
     }
 }

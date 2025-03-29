@@ -1,37 +1,29 @@
-﻿using API.DTO.Request;
-using API.DTO.Response;
-using API.Models;
+﻿using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text;
 
 namespace WebApp.Pages.Chapter
 {
     public class EditChapterModel : PageModel
     {
-        private readonly HttpClient _httpClient;
+        private readonly PRN221_Project_1Context context;
 
-        public EditChapterModel(HttpClient httpClient)
+        public EditChapterModel(PRN221_Project_1Context context)
         {
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:7186");
+            this.context = context;
         }
-
         [BindProperty]
-        public ChapterDetailResponse Chapter { get; set; } = default!;
+        public API.Models.Chapter Chapter { get; set; } = default!;
         public string Message { get; set; } = string.Empty;
-        public async Task OnGet(int chapterId, int bookId)
+        public void OnGet(int id)
         {
-            var userId = HttpContext.Session.GetString("userId");
-            var exist = await _httpClient.GetAsync("api/chapters/"+chapterId+"?bookId="+bookId+"&userId="+userId);
-            if (exist.IsSuccessStatusCode)
+            var exist = context.Chapters.Find(id);
+            if (exist != null)
             {
-                Chapter = await exist.Content.ReadFromJsonAsync<ChapterDetailResponse>();
+                Chapter = exist;
             }
         }
-        public async Task<IActionResult> OnPost()
+        public IActionResult OnPost()
         {
             try
             {
@@ -40,31 +32,14 @@ namespace WebApp.Pages.Chapter
                 string content2 = content.Substring(content.Length);
                 Chapter.Contents1 = content1;
                 Chapter.Contents2 = content2;
-                EditChapterRequest request = new EditChapterRequest
-                {
-                    Contents1 = content1,
-                    ChapterId = Chapter.ChapterId,
-                    ChapterName = Chapter.ChapterName,
-                    Contents2 = content2,
-                    NumberChapter = Chapter.NumberChapter,
-                    
-                };
-                var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-               var res = await _httpClient.PutAsync("api/chapters", jsonContent);
-                if (res.IsSuccessStatusCode)
-                {
-                    Message = "Đã cập nhật chapter";
-                    return Page();
-                }
-                else
-                {
-                    Message = "Có lỗi xảy ra khi cập nhật chapter";
-                    return Page();
-                }
+                context.Chapters.Update(Chapter);
+                context.SaveChanges();
+                Message = "Đã cập nhật chapter";
+                return Page();
             }
             catch (Exception)
             {
-                Message = "Lỗi";
+                Message = "Có lỗi xảy ra khi cập nhật chapter";
                 return Page();
             }
         }

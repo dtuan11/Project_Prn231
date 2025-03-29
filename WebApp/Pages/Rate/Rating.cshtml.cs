@@ -1,4 +1,3 @@
-using API.DTO.Response;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,30 +6,38 @@ namespace WebApp.Pages.Rate
 {
     public class RatingModel : PageModel
     {
-        private readonly HttpClient _httpClient;
+        private readonly PRN221_Project_1Context context;
 
-        public RatingModel(HttpClient httpClient)
+        public RatingModel(PRN221_Project_1Context context)
         {
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:7186");
+            this.context = context;
         }
 
-        public List<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
+        public List<Category> Categories { get; set; } = new List<Category>();
         public string? UserId { get; set; } = default!;
-        public async Task<IActionResult> OnGet(int point, int bookId, int userId)
+        public IActionResult OnGet(int point, int bookId, int userId)
         {
-            var categoriesResponse = await _httpClient.GetAsync("api/categories");
-            if (categoriesResponse.IsSuccessStatusCode)
-            {
-                Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();
-            }
+            Categories = context.Categories.ToList();
             UserId = HttpContext.Session.GetString("userId");
-
-            var rateResponse = await _httpClient.GetAsync("api/books/rate?point="+point+"&bookId="+bookId+"&userId="+userId);
-            
-            return RedirectToPage("/Homepage/BookDetail", new { id = bookId });
-
-
+            var existRate = context.Rates.FirstOrDefault(r => r.UserId == userId && r.BookId == bookId);
+            if (existRate != null)
+            {
+                existRate.Point = point;
+                context.Rates.Update(existRate);
+                context.SaveChanges();
+            }
+            else
+            {
+                var rate = new API.Models.Rate
+                {
+                    BookId = bookId,
+                    UserId = userId,
+                    Point = point,
+                };
+                context.Rates.Add(rate);
+                context.SaveChanges();
+            }
+            return RedirectToPage("/Homepage/BookDetail",new {id = bookId});
         }
     }
 }

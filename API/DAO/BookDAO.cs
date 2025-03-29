@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace API.DAO
 {
-    public class BookDAO : IBookDao
+    public class BookDAO: IBookDao
     {
         private readonly PRN221_Project_1Context _context;
 
@@ -74,28 +74,6 @@ namespace API.DAO
             return _context.Rates
                 .Where(x => x.BookId == bookId)
                 .ToList();
-        }
-
-        public void RateBook(int point, int bookId, int userId)
-        {
-            var existRate = _context.Rates.FirstOrDefault(r => r.UserId == userId && r.BookId == bookId);
-            if (existRate != null)
-            {
-                existRate.Point = point;
-                _context.Rates.Update(existRate);
-                _context.SaveChanges();
-            }
-            else
-            {
-                var rate = new API.Models.Rate
-                {
-                    BookId = bookId,
-                    UserId = userId,
-                    Point = point,
-                };
-                _context.Rates.Add(rate);
-                _context.SaveChanges();
-            }
         }
     }
 }
