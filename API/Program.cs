@@ -26,11 +26,13 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IBookDao, BookDAO>();
 builder.Services.AddScoped<IChapterDao, ChapterDAO>();
 builder.Services.AddScoped<UserDAO>();
+builder.Services.AddScoped<IProfileDao, ProfileDao>();
 
 // Register Repositories
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
 
 // Swagger/OpenAPI

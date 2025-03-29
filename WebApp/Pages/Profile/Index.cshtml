@@ -11,8 +11,6 @@
     <link href="~/css/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <style>
-        
-
         .sidebar {
             position: fixed;
             top: 0px !important;
@@ -27,7 +25,6 @@
             scrollbar-color: #aab7cf transparent;
             box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
             background-color: #fff;
-
         }
 
         .profile .profile-card img {
@@ -48,16 +45,13 @@
     <link rel="stylesheet" href="~/css/app.css">
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/vendor/css/style.css" rel="stylesheet">
-
 </head>
 <body>
     <header class="header d-none d-lg-block">
-        <!-- place navbar here -->
         <nav class="navbar navbar-expand-lg navbar-dark header__navbar p-md-0">
             <div class="container">
                 <a class="navbar-brand" asp-page="/Homepage/Index">
-                    <img src="~/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
-                         style="width: 200px;">
+                    <img src="~/images/logo_text.png" alt="Logo Suu Truyen" class="img-fluid" style="width: 200px;">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -67,70 +61,40 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Thể loại
                             </a>
                             <ul class="dropdown-menu dropdown-menu-custom">
-                                @{
-
-                                    foreach (var cate in Model.Categories)
-                                    {
-                                        <li>
-                                            <a class="dropdown-item" asp-page="/Homepage/Category" asp-route-id="@cate.CateId">
-                                                @cate.Name
-                                            </a>
-                                        </li>
-                                    }
+                                @foreach (var cate in Model.Categories)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-page="/Homepage/Category" asp-route-id="@cate.CateId">
+                                            @cate.Name
+                                        </a>
+                                    </li>
                                 }
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Theo số chương
                             </a>
                             <ul class="dropdown-menu dropdown-menu-custom">
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        Dưới
-                                        100
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        100
-                                        - 500
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        500
-                                        - 1000
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        Trên
-                                        1000
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="#">Dưới 100</a></li>
+                                <li><a class="dropdown-item" href="#">100 - 500</a></li>
+                                <li><a class="dropdown-item" href="#">500 - 1000</a></li>
+                                <li><a class="dropdown-item" href="#">Trên 1000</a></li>
                             </ul>
                         </li>
                         @{
-                            var userId = @Model.UserId;
-                        }
-                        @{
-                            if (!string.IsNullOrEmpty(userId))
+                            if (!string.IsNullOrEmpty(Model.AccountId))
                             {
-                                var id = int.Parse(userId);
+                                var id = int.Parse(Model.AccountId);
                                 <li class="nav-item-a" style="margin-left:190px">
                                     <a class="nav-link" href="logout">Logout</a>
                                 </li>
                                 <li style="margin-left: 1cm" class="nav-item-a">
-                                    <a class="nav-link" asp-page="/Profile/Index" asp-route-id="@id">
-                                        Tài khoản
-                                    </a>
+                                    <a class="nav-link" asp-page="/Profile/Index" asp-route-id="@id">Tài khoản</a>
                                 </li>
                             }
                             else
@@ -140,12 +104,9 @@
                                 </li>
                             }
                         }
-
                     </ul>
-
                     <form class="d-flex header__form-search" action="" method="GET">
-                        <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word"
-                               value="">
+                        <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word" value="">
                         <div class="col-12 search-result shadow no-result d-none">
                             <div class="card text-white bg-light">
                                 <div class="card-body p-0">
@@ -157,14 +118,10 @@
                                 </div>
                             </div>
                         </div>
-
                         <button class="btn" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em"
-                                 viewBox="0 0 512 512">
-                                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z">
-                                </path>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path>
                             </svg>
-
                         </button>
                     </form>
                 </div>
@@ -172,209 +129,145 @@
         </nav>
     </header>
     <aside style="margin-top: 80px" id="sidebar" class="sidebar">
-
         <ul class="sidebar-nav" id="sidebar-nav">
-            
             <li class="nav-item">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
-            </li><!-- End Dashboard Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link " href="#">
-                    <i class="bi bi-person"></i>
-                    <span>Profile</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" asp-page="/Profile/Book">
-                    <i class="bi bi-envelope"></i>
-                    <span>Ðăng truyện</span>
-                </a>
-            </li><!-- End Contact Page Nav -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" asp-page="/Book/ManageBook">
-                    <i class="bi bi-envelope"></i>
-                    <span>Danh sách truyện</span>
-                </a>
             </li>
-            
             <li class="nav-item">
-                <a class="nav-link collapsed" asp-page="/Book/ManageChapter">
-                    <i class="bi bi-envelope"></i>
-                    <span>Quản lý chapter</span>
-                </a>
+                <a class="nav-link " href="#"> <i class="bi bi-person"></i> <span>Profile</span> </a>
             </li>
-            @if (Model.user.RoleId == 0)
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Profile/Book"> <i class="bi bi-envelope"></i> <span>Đăng truyện</span> </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Book/ManageBook"> <i class="bi bi-envelope"></i> <span>Danh sách truyện</span> </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-page="/Book/ManageChapter"> <i class="bi bi-envelope"></i> <span>Quản lý chapter</span> </a>
+            </li>
+            @if (Model.ProfileModel.RoleId == 0)
             {
                 <li class="nav-item">
-                    <a class="nav-link collapsed" asp-page="/Account/ManagerAccount">
-                        <i class="bi bi-envelope"></i>
-                        <span>Quản lý Tài Khoản</span>
-                    </a>
+                    <a class="nav-link collapsed" asp-page="/Account/ManagerAccount"> <i class="bi bi-envelope"></i> <span>Quản lý Tài Khoản</span> </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-page="/Profile/ViewStatistic"> <i class="bi bi-envelope"></i> <span>Xem thống kê lượt đọc</span> </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-page="/Profile/ViewStatisticUserBookView"> <i class="bi bi-envelope"></i> <span>Xem thống kê lượt tổng lượt đọc của người đăng</span> </a>
                 </li>
             }
-            @{
-                if(Model.UserModel.RoleId == 0)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" asp-page="/Profile/ViewStatistic">
-                            <i class="bi bi-envelope"></i>
-                            <span>Xem thống kê lượt đọc</span>
-                        </a>
-                    </li>
-                }
-            }@{
-                if (Model.user.RoleId == 0)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" asp-page="/Profile/ViewStatisticUserBookView">
-                            <i class="bi bi-envelope"></i>
-                            <span>Xem thống kê lượt tổng lượt đọc của người đăng</span>
-                        </a>
-                    </li>
-                }
-            }
-    </aside><!-- End Sidebar-->
-
+        </ul>
+    </aside>
     <main style="margin-top: 4px" id="main" class="main">
-
         <div class="pagetitle">
             <h1>Profile</h1>
-        </div><!-- End Page Title -->
-
+        </div>
         <section class="section profile">
             <div class="row">
                 <div class="col-xl-4">
-
                     <div class="card">
                         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-                            <img src="@Model.UserModel.Avatar" width="290px" height="200px">
-                            <h6 style="margin-top: 10px" class="f-w-600">Username</h6>
+                            <img src="@Model.ProfileModel.Avatar" width="290px" height="200px">
+                            <h6 style="margin-top: 10px" class="f-w-600">@Model.ProfileModel.UserName</h6>
                             <p>Role</p>
                         </div>
                     </div>
-
                 </div>
-
                 <div class="col-xl-8">
-
                     <div class="card">
                         <div class="card-body pt-3">
-                            <!-- Bordered Tabs -->
                             <ul class="nav nav-tabs nav-tabs-bordered">
-
                                 <li class="nav-item">
-                                    <button class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#profile-overview">
-                                        Thông tin cá nhân
-                                    </button>
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Thông tin cá nhân</button>
                                 </li>
-
                                 <li class="nav-item">
                                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
                                 </li>
-
                                 <li class="nav-item">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">
-                                        Đổi mật khẩu
-                                    </button>
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Đổi mật khẩu</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-reading-history">
-                                        Lịch sử đọc truyện
-                                    </button>
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-reading-history">Lịch sử đọc truyện</button>
                                 </li>
                             </ul>
                             <div class="tab-content pt-2">
                                 <div class="tab-pane fade show active profile-overview" id="profile-overview">
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Email</div>
-                                        <div class="col-lg-9 col-md-8">@(Model.UserModel.Email == null ? "chưa có" : Model.UserModel.Email)</div>
+                                        <div class="col-lg-9 col-md-8">@(Model.ProfileModel.Email ?? "chưa có")</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Địa chỉ</div>
-                                        <div class="col-lg-9 col-md-8">@(Model.UserModel.Address==null?"chưa có" : Model.UserModel.Address)</div>
+                                        <div class="col-lg-9 col-md-8">@(Model.ProfileModel.Address ?? "chưa có")</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Số điện thoại</div>
-                                        <div class="col-lg-9 col-md-8">@(Model.UserModel.Phone == null ? "chưa có" : Model.UserModel.Phone)</div>
+                                        <div class="col-lg-9 col-md-8">@(Model.ProfileModel.Phone ?? "chưa có")</div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-                                    <!-- Profile Edit Form -->
                                     <form method="post" enctype="multipart/form-data">
-                                        <!-- Avatar -->
                                         <div class="row mb-3">
                                             <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Avatar</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <img src="" alt="Profile" width="300" height="200"><br>
-                                                <input style="margin-top: 10px; margin-bottom: 10px" name="File" type="file" class="form-control" id="Email" value="">
+                                                <img src="@Model.ProfileModel.Avatar" alt="Profile" width="300" height="200"><br>
+                                                <input style="margin-top: 10px; margin-bottom: 10px" name="File" type="file" class="form-control" id="File">
                                             </div>
                                         </div>
-
                                         <div class="row mb-3" style="display: none">
-                                            <label for="Email" class="col-md-4 col-lg-3 col-form-label">Id</label>
+                                            <label for="AccountId" class="col-md-4 col-lg-3 col-form-label">Id</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="userId" type="text" class="form-control" asp-for="@Model.UserModel.UserId" id="Email" readonly="">
+                                                <input name="userId" type="text" class="form-control" asp-for="@Model.ProfileModel.AccountId" readonly="">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="email" type="email" class="form-control" asp-for="@Model.UserModel.Email" id="Email">
+                                                <input name="email" type="email" class="form-control" asp-for="@Model.ProfileModel.Email" id="Email">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label for="Email" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                                            <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="address" type="text" asp-for="@Model.UserModel.Address" class="form-control" id="Email">
+                                                <input name="address" type="text" asp-for="@Model.ProfileModel.Address" class="form-control" id="Address">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="phone" asp-for="@Model.UserModel.Phone" type="text" class="form-control" id="phone" pattern="[0-9]{9,11}" title="Vui lòng nhập số điện thoại hợp lệ (từ 9 đến 11 số)" minlength="9" maxlength="11" required>
+                                                <input name="phone" asp-for="@Model.ProfileModel.Phone" type="text" class="form-control" id="phone" pattern="[0-9]{9,11}" title="Vui lòng nhập số điện thoại hợp lệ (từ 9 đến 11 số)" minlength="9" maxlength="11" required>
                                             </div>
                                         </div>
-
-
-
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                         </div>
-                                    </form><!-- End Profile Edit Form -->
+                                    </form>
                                 </div>
-
-                                <div class="tab-pane fade pt-3" id="profile-settings">
-                                </div>
-
                                 <div class="tab-pane fade pt-3" id="profile-change-password">
-                                    <!-- Change Password Form -->
                                     <form id="changePasswordForm" method="post" onsubmit="return validateForm()">
-                                        <input type="hidden" name="userId" value="@Model.UserModel.UserId" />
+                                        <input type="hidden" name="userId" value="@Model.ProfileModel.AccountId" />
                                         <div class="row mb-3">
                                             <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input class="form-control" type="password" id="currentPassword" name="currentPassword" value="" required>
+                                                <input class="form-control" type="password" id="currentPassword" name="currentPassword" required>
                                             </div>
                                         </div>
-
                                         <div class="row mb-3">
                                             <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input class="form-control" type="password" id="newPassword" asp-for="@Model.UserModel.Password" name="newPassword" value="" required>
+                                                <input class="form-control" type="password" id="newPassword" name="newPassword" required>
                                             </div>
                                         </div>
-
                                         <div class="row mb-3">
-                                            <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                                            <label for="confirmPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                                             <div class="col-md-8 col-lg-9">
                                                 <input class="form-control" type="password" id="confirmPassword" name="confirmPassword" required>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            @(Model.Message)
+                                            @Model.Message
                                         </div>
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary">Change Password</button>
@@ -383,18 +276,15 @@
                                     <script>
                                         function validateForm() {
                                             var newPassword = document.getElementById("newPassword").value.trim();
-
                                             if (newPassword === "") {
                                                 alert("Do not enter spaces.");
                                                 return false;
                                             }
-
                                             return true;
                                         }
-                                    </script><!-- End Change Password Form -->
+                                    </script>
                                 </div>
                                 <div class="tab-pane fade pt-3" id="profile-reading-history">
-                                    <!-- Change Password Form -->
                                     <div class="row">
                                         <table>
                                             <tr>
@@ -403,75 +293,26 @@
                                                 <td>Chapter</td>
                                                 <td>Ngày đọc</td>
                                             </tr>
-                                            @{
-                                                foreach(var read in Model.Readings)
-                                                {
-                                                    
-                                                
+                                            @foreach (var read in Model.Readings)
+                                            {
                                                 <tr>
-                                                    <td>@read.Book.Title</td>
-                                                    <td><img style="width:100px; height:100px;" src="@read.Book.Img" alt="alt" /></td>
-                                                    <td><a asp-page="/Homepage/Chapter" 
-                                                    asp-route-id="@read.Chapter.ChapterId" 
-                                                    asp-route-bookId="@read.Book.BookId">@read.Chapter.ChapterName</a></td>
+                                                    <td>@read.BookTitle</td>
+                                                    <td><img style="width:100px; height:100px;" src="@read.BookImage" alt="alt" /></td>
+                                                    <td><a asp-page="/Homepage/Chapter" asp-route-id="@read.ChapterId" asp-route-bookId="@read.BookId">@read.ChapterName</a></td>
                                                     <td>@read.ReadingDate</td>
                                                 </tr>
-
-                                                }
                                             }
                                         </table>
                                     </div>
                                 </div>
-
-
-                            </div><!-- End Bordered Tabs -->
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
-    </main><!-- End #main -->
-    @*   <div id="footer" class="footer border-top pt-2">
-    <div class="container">
-    <div class="row">
-    <div class="col-12 col-md-5">
-    <strong>Suu Truyện</strong> - <a title="Đọc truyện online" class="text-dark text-decoration-none"
-    href="#">Đọc truyện</a> online một cách nhanh nhất. Hỗ trợ mọi thiết bị như
-    di
-    động và máy tính bảng.
-    </div>
-    <ul class="col-12 col-md-7 list-unstyled d-flex flex-wrap list-tag">
-    <c:forEach items="${category}" var="ca">
-    <li class="me-1">
-    <span class="badge text-bg-light">
-    <a class="text-dark text-decoration-none"
-    href="category?cid=${ca.cateid}">cate</a>
-    </span>
-    </li>
-    </c:forEach>
-    </ul>
-
-    <div class="col-12">
-    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-    <img alt="Creative Commons License" style="border-width:0;margin-bottom: 10px"
-    src="./images/88x31.png">
-    </a><br>
-    <p>
-    Website hoạt động dưới Giấy phép truy cập mở <a rel="license"
-    class="text-decoration-none text-dark hover-title"
-    href="http://creativecommons.org/licenses/by/4.0/">
-    Creative Commons Attribution 4.0
-    International License
-    </a>
-    </p>
-    </div>
-    </div>
-    </div>
-    </div> *@
-    <!-- Vendor JS Files -->
+    </main>
     <script src="~/css/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="~/css/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

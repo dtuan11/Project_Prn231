@@ -1,4 +1,5 @@
-﻿using API.Models;
+﻿using API.DTO.Response;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,129 +10,71 @@ namespace WebApp.Pages.Profile
 {
     public class IndexModel : PageModel
     {
-        private readonly PRN221_Project_1Context context;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(PRN221_Project_1Context context)
+        public IndexModel(IHttpClientFactory httpClientFactory)
         {
-            this.context = context;
+            _httpClientFactory = httpClientFactory;
         }
+
         public List<Category> Categories { get; set; } = new List<Category>();
-        public string? UserId { get; set; } = default!;
-        [BindProperty]
-        public User UserModel { get; set; } = default!;
-        [BindProperty]
-        public IFormFile File { get; set; }
-        public List<Reading>Readings { get; set; } = new List<Reading>();
-        public User user { get; set; }
-
+        public string? AccountId { get; set; }
+        public ProfileResponse ProfileModel { get; set; } = new ProfileResponse();
+        public List<ReadingResponse> Readings { get; set; } = new List<ReadingResponse>();
         public string Message { get; set; } = string.Empty;
-        public void OnGet(int id)
+
+        public async Task OnGetAsync(int id)
         {
-            Categories = context.Categories.ToList();
-            UserId = HttpContext.Session.GetString("userId");
-            Readings = context.Readings.Include(x=>x.Book).Include(x=>x.Chapter).Where(x=>x.UserId == id).ToList();
-            user = context.Users.FirstOrDefault(x => x.UserId == int.Parse(UserId));
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7186/"); 
 
-            var exist = context.Users.Find(id);
-            if (exist != null)
-            {
-                UserModel = exist;
-            }
-        }
-        public IActionResult OnPost()
-        {
+            AccountId = HttpContext.Session.GetString("userId");
 
-            string newPassword = Request.Form["newPassword"];
-            string currentPassword = Request.Form["currentPassword"];
-            if(currentPassword != null)
-            {
-                currentPassword = HashPassword(currentPassword);
-            }
-            string confirmPassword = Request.Form["confirmPassword"];
-            string userId = Request.Form["userId"];
-            var user = context.Users.Find(int.Parse(userId));
-            if (user != null)
-            {
-                if (!string.IsNullOrEmpty(newPassword))
-                {
-                    if (currentPassword.Equals(user.Password))
-                    {
-                        if (newPassword.Equals(currentPassword))
-                        {
-                            Message = "Mật khẩu mới đang trùng với mật khẩu cũ";
-                        }
-                        else if (!newPassword.Equals(confirmPassword))
-                        {
-                            Message = "Nhập lại không trùng khớp";
-                        }
-                        else
-                        {
-                            user.Password = HashPassword(newPassword);
-                            UserModel = user;
-                            context.Users.Update(user);
-                            context.SaveChanges();
-                            Message = "Đổi mật khẩu thành công";
-                        }
-                    }
-                    else
-                    {
-                        Message = "Sai mật khẩu hiện tại";
-                    }
-                }
-                else
-                {
-                    if (File != null)
-                    {
-                        
-                        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-
-                     
-                        if (!Directory.Exists(folderPath))
-                        {
-                            Directory.CreateDirectory(folderPath);
-                        }
-
-                       
-                        var filePath = Path.Combine(folderPath, File.FileName);
-
-                       
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                             File.CopyTo(stream);
-                        }
-                    }
-                    string email = Request.Form["email"];
-                    string address = Request.Form["address"];
-                    string phone = Request.Form["phone"];
-                    if (File != null)
-                    {
-                        user.Avatar = "/images/" + File.FileName;
-                    }
-                    user.Email = email;
-                    user.Address = address;
-                    user.Phone = phone;
-                    UserModel = user;
-                    context.Users.Update(user);
-                    context.SaveChanges();
-
-                }
-            }
-            
-            return RedirectToPage("/Profile/Index",new {id=user.UserId});
+            Categories = await client.GetFromJsonAsync<List<Category>>("api/profile/categories") ?? new List<Category>();
+            ProfileModel = await client.GetFromJsonAsync<ProfileResponse>($"api/profile/{id}") ?? new ProfileResponse();
+            Readings = await client.GetFromJsonAsync<List<ReadingResponse>>($"api/profile/{id}/readings") ?? new List<ReadingResponse>();
         }
 
-        private string HashPassword(string password)
+        public async Task<IActionResult> OnPostAsync()
         {
-            using (SHA256 sha256 = SHA256.Create())
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7186/");
+
+            var form = await Request.ReadFormAsync();
+            var accountId = int.Parse(form["userId"].ToString());
+
+            var content = new MultipartFormDataContent
             {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                foreach (byte b in bytes)
-                {
-                    builder.Append(b.ToString("x2"));
-                }
-                return builder.ToString();
+                { new StringContent(accountId.ToString()), "AccountId" },
+                { new StringContent(form["email"]), "Email" },
+                { new StringContent(form["address"]), "Address" },
+                { new StringContent(form["phone"]), "Phone" }
+            };
+
+            if (!string.IsNullOrEmpty(form["newPassword"]))
+            {
+                content.Add(new StringContent(form["currentPassword"]), "CurrentPassword");
+                content.Add(new StringContent(form["newPassword"]), "NewPassword");
+                content.Add(new StringContent(form["confirmPassword"]), "ConfirmPassword");
             }
+
+            if (Request.Form.Files["File"] != null)
+            {
+                var file = Request.Form.Files["File"];
+                content.Add(new StreamContent(file.OpenReadStream()), "AvatarFile", file.FileName);
+            }
+
+            var response = await client.PutAsync("api/profile", content);
+            var result = await response.Content.ReadFromJsonAsync<ProfileResponse>();
+
+            Message = result?.Message ?? "An error occurred";
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToPage("/Profile/Index", new { id = accountId });
+            }
+
+            await OnGetAsync(accountId);
+            return Page();
         }
     }
 }
