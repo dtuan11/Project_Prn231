@@ -13,6 +13,9 @@ namespace API.DAO.IDAO
         List<Book> SearchBooks(string keyword);
         Book GetBookById(int id);
         List<Rate> GetRatesByBookId(int bookId);
-        
+        Book CreateBook(Book book);
+
+        void UpdateBook(Book book);
+        void DeleteRelatedData(int bookId);
     }
 }

@@ -3,6 +3,7 @@ using API.DAO;
 using API.Repositories.IRepositories;
 using API.DAO.IDAO;
 using API.DTO.Response;
+using API.DTO.Request;
 
 namespace API.Repositories
 {
@@ -126,5 +127,69 @@ namespace API.Repositories
                 RateTime = rateTime
             };
         }
+        public BookResponse CreateBook(BookRequest bookRequest)
+        {
+            var book = new Book
+            {
+                AuthorName = bookRequest.AuthorName,
+                Title = bookRequest.Title,
+                Img = bookRequest.Img,
+                Detail = bookRequest.Detail,
+                
+                PublishDate = DateTime.UtcNow,
+                Status = "Updating",
+                Approve = "Pending"
+            };
+
+            var createdBook = _bookDao.CreateBook(book);
+
+            return new BookResponse
+            {
+                BookId = createdBook.BookId,
+                Title = createdBook.Title,
+                Img = createdBook.Img,
+                Status = createdBook.Status,
+                PublishDate = createdBook.PublishDate
+            };
+        }
+        public bool UpdateBook(int bookId, BookRequest request)
+        {
+            var book = _bookDao.GetBookById(bookId);
+
+            book.Title = request.Title ?? book.Title;
+            book.Img = request.Img ?? book.Img;
+            book.Detail = request.Detail ?? book.Detail;
+            book.Status = request.Status ?? book.Status;
+            book.Approve = request.Approve ?? book.Approve;
+            book.AuthorName = request.AuthorName ?? book.AuthorName;
+
+            _bookDao.UpdateBook(book);
+            return true;
+        }
+
+        public Book GetBookById(int bookId)
+        {
+            return _bookDao.GetBookById(bookId);
+        }
+
+        public bool DeleteBook(int bookId)
+        {
+            var book = _bookDao.GetBookById(bookId);
+
+            if (book == null || book.Status == "Delete")
+            {
+                return false;
+            }
+
+            // Xóa dữ liệu liên quan trong các bảng khác
+            _bookDao.DeleteRelatedData(bookId);
+
+            // Cập nhật trạng thái của sách thành "Delete"
+            book.Status = "Delete";
+            _bookDao.UpdateBook(book);
+
+            return true;
+        }
+
     }
 }

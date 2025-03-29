@@ -1,6 +1,7 @@
 ﻿using API.DAO.IDAO;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.DAO
@@ -75,5 +76,57 @@ namespace API.DAO
                 .Where(x => x.BookId == bookId)
                 .ToList();
         }
+        public Book CreateBook(Book book)
+        {
+            _context.Books.Add(book);
+            _context.SaveChanges();
+            return book;
+        }
+     
+        public void UpdateBook(Book book)
+        {
+            _context.Books.Update(book);
+            _context.SaveChanges();
+        }
+        public void DeleteBook(Book book)
+        {
+            _context.Books.Remove(book);
+            _context.SaveChanges();
+        }
+        public void DeleteRelatedData(int bookId)
+        {
+            var categoriesInBooks = _context.CategoryInBooks.Where(c => c.BookId == bookId);
+            var rates = _context.Rates.Where(r => r.BookId == bookId);
+            var readings = _context.Readings.Where(r => r.Bookid == bookId);
+            var saveBooks = _context.SavedBooks.Where(s => s.BookId == bookId);
+            var comments = _context.Comments.Where(c => c.BookId == bookId);
+            var chapters = _context.Chapters.Where(c => c.BookId == bookId);
+            var reports = _context.Reports.Where(r => r.BookId == bookId);
+
+            // Lấy toàn bộ các reportId liên quan đến book cần xóa
+            var reportIds = reports.Select(r => (int?)r.ReportId).ToList();
+
+            var responses = _context.Responses
+                                    .Where(resp => reportIds.Contains(resp.ReportId))
+                                    .ToList();
+
+            _context.Responses.RemoveRange(responses);
+
+            // Sau đó mới xóa các Report
+            _context.Reports.RemoveRange(reports);
+
+            // Xóa các bảng liên quan khác
+            _context.CategoryInBooks.RemoveRange(categoriesInBooks);
+            _context.Rates.RemoveRange(rates);
+            _context.Readings.RemoveRange(readings);
+            _context.SavedBooks.RemoveRange(saveBooks);
+            _context.Comments.RemoveRange(comments);
+            _context.Chapters.RemoveRange(chapters);
+
+            _context.SaveChanges();
+        }
+
+
+
     }
 }

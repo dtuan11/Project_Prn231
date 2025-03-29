@@ -1,5 +1,8 @@
-﻿using API.Repositories.IRepositories;
+﻿using API.DTO.Request;
+using API.Models;
+using API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -68,5 +71,60 @@ namespace API.Controllers
             }
             return Ok(book);
         }
+        [HttpPost]
+        public IActionResult CreateBook([FromBody] BookRequest bookRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var book = _bookRepository.CreateBook(bookRequest);
+            if (book == null)
+            {
+                return StatusCode(500, "An error occurred while creating the book.");
+            }
+
+            return Ok("Tao book thanh cong: \n"+book);
+        }
+        [HttpPut("{bookId}")]
+        public IActionResult UpdateBook(int bookId, [FromBody] BookRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+        
+
+            var result = _bookRepository.UpdateBook(bookId, request);
+
+            if (!result)
+            {
+                return NotFound("Book not found or you don't have permission to update this book.");
+            }
+
+            return Ok("Book updated successfully.");
+        }
+        [HttpDelete("{bookId}")]
+        public IActionResult DeleteBook(int bookId)
+        {
+            //var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            //if (userId == 0)
+            //{
+            //    return Unauthorized("User is not authenticated.");
+            //}
+
+            var result = _bookRepository.DeleteBook(bookId);
+
+            if (!result)
+            {
+                return NotFound("Book not found or you don't have permission to delete this book.");
+            }
+
+            return Ok("Book deleted successfully.");
+        }
+
+
     }
 }

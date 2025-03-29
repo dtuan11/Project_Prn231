@@ -1,4 +1,5 @@
-﻿using API.DTO.Response;
+﻿using API.DTO.Request;
+using API.DTO.Response;
 using API.Models;
 
 namespace API.Repositories.IRepositories
@@ -12,5 +13,8 @@ namespace API.Repositories.IRepositories
         bool CategoryExists(int categoryId);
         List<BookResponse> SearchBooks(string keyword);
         BookDetailResponse GetBookDetailById(int id);
+        BookResponse CreateBook(BookRequest bookRequest);
+        bool UpdateBook(int bookId, BookRequest request);
+        bool DeleteBook(int bookId);
     }
 }
