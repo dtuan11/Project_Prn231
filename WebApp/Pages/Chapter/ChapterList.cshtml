@@ -37,13 +37,13 @@
         }
 
         /* .header {
-                    transition: all 0.5s;
-                    z-index: 997;
-                    height: 0px !important;
-                    box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
-                    background-color: #fff;
-                    padding-left: 20px;
-                } */
+                            transition: all 0.5s;
+                            z-index: 997;
+                            height: 0px !important;
+                            box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
+                            background-color: #fff;
+                            padding-left: 20px;
+                        } */
     </style>
     <link rel="stylesheet" href="~/css/app.css">
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
@@ -264,9 +264,9 @@
                                             <tr>
                                                 <td class="listnumberchap">
                                                     @chap.NumberChapter <br>
-                                                    <a asp-page="/Chapter/EditChapter" asp-route-id="@chap.ChapterId" class="btn btn-secondary btn-sm mb-1 mr-md-1">Sửa Chương</a>
+                                                    <a asp-page="/Chapter/EditChapter" asp-route-chapterId="@chap.ChapterId" asp-route-bookId="@chap.BookId" class="btn btn-secondary btn-sm mb-1 mr-md-1">Sửa Chương</a>
                                                     <a asp-page="/Homepage/Chapter" asp-route-id="@chap.ChapterId" asp-route-bookId="@chap.BookId" class="btn btn-secondary btn-sm mb-1 mr-md-1">Xem chương</a>
-                                                    <a href="javascript:void(0);" onclick="confirmDelete(@chap.ChapterId)" class="btn btn-secondary btn-sm mb-1 mr-md-1">Xóa</a>
+                                                    <a href="javascript:void(0);" onclick="confirmDelete(@chap.ChapterId,@chap.BookId)" class="btn btn-secondary btn-sm mb-1 mr-md-1">Xóa</a>
                                                 </td>
                                                 <td class="listnamechap">@chap.ChapterName</td>
                                                 <td class="countwords">@Model.CountWords[chap.ChapterId]</td>
@@ -274,10 +274,19 @@
                                         }
                                     }
                                     <script>
-                                        function confirmDelete(chapterId) {
+                                        function confirmDelete(chapterId, bookId) {
                                             if (confirm("Bạn có muốn xóa chapter này ?")) {
-                                                // Nếu người dùng đồng ý xóa, chuyển hướng đến trang xóa với id của sách
-                                                window.location.href = "DeleteChapter?id=" + chapterId;
+                                                fetch(`https://localhost:7186/api/chapters/${chapterId}`, {
+                                                    method: 'DELETE'
+                                                })
+                                                    .then(response => {
+                                                        if (response.ok) {
+                                                            window.location.href = `/Chapter/ChapterList?id=${bookId}`;
+                                                        } else {
+                                                            alert('Xóa thất bại!');
+                                                        }
+                                                    })
+                                                    .catch(error => console.error('Lỗi:', error));
                                             }
                                         }
                                     </script>

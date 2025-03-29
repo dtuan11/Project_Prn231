@@ -24,6 +24,7 @@ namespace API.Repositories
                 ChapterName = request.ChapterName,
                 Contents1 = request.Contents1,
                 Contents2 = request.Contents2,
+                BookId = request.bookId,
             });
         }
 

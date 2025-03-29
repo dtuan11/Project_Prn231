@@ -69,7 +69,7 @@ namespace API.Controllers
             return Ok(book);
         }
 
-        [HttpPost]
+        [HttpGet("rate")]
         public void RateBook([FromQuery] int point, [FromQuery] int bookId, [FromQuery] int userId)
         {
             _bookRepository.RateBook(point, bookId, userId);
