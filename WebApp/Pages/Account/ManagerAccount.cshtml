@@ -287,7 +287,7 @@
                                 </thead>
                                 <tbody>
                                     @{
-                                        foreach (var user in Model.users)
+                                        @foreach (var user in Model.users)
                                         {
                                             <tr>
                                                 <td class="Username">
@@ -295,43 +295,142 @@
                                                     @{
                                                         if (user.RoleId == 1)
                                                         {
-                                                            <a href="javascript:void(0);" onclick="confirmDelete(@user.UserId)"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                                                            <a asp-page="/Account/UpdateAccount" asp-route-id="@user.UserId"><i class="material-icons" data-toggle="tooltip" title="Update">&#xE254;</i></a>
+                                                            @if (user.Active)
+                                                            {
+                                                                <a href="javascript:void(0);" onclick="confirmDelete(@user.UserId, true)">
+                                                                    <i class="material-icons text-danger" data-toggle="tooltip" title="Vô hiệu hóa">&#xE872;</i>
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="javascript:void(0);" onclick="confirmDelete(@user.UserId, false)">
+                                                                    <i class="material-icons text-success" data-toggle="tooltip" title="Kích hoạt">&#xE86C;</i>
+                                                                </a>
+                                                            }
+                                                            <a href="javascript:void(0);" onclick="confirmUpdateRole(@user.UserId, @user.RoleId)">
+                                                                <i class="material-icons text-primary" data-toggle="tooltip" title="Cập nhật quyền">&#xE254;</i>
+                                                            </a>
                                                         }
-                                                        }
-                                                    </td>
-                                                    <td class="image"><img src="@Url.Content(user.Avatar)" width="100px"></td>
-                                                    <td class="Address">@user.Address</td>
-                                                    <td class="Phone">@user.Phone</td>
-                                                    <td class="Email">@user.Email</td>
-                                                    <td class="Role">@user.Role.RoleName</td>
-                                                    <td class="Active">@(user.Active)</td>
-
-                                                </tr>
                                                     }
-                                            }
-                                                    @* <script>
-                                    function toggleDetail(id) {
-                                    const detailElement = document.getElementById(`detail-${id}`);
-                                    const button = document.getElementById(`toggle-btn-${id}`);
-
-                                    if (detailElement.classList.contains('truncated')) {
-                                    detailElement.classList.remove('truncated');
-                                    button.textContent = 'Thu gọn';
-                                    } else {
-                                    detailElement.classList.add('truncated');
-                                    button.textContent = 'Mở rộng';
-                                    }
-                                    }
-                                    </script> *@
-                                            <script>
-                                                function confirmDelete(UserId) {
-                                                    if (confirm("Bạn có muốn thay đổi trạng thái active của người dùng này ?")) {
-                                                        // Nếu người dùng đồng ý xóa, chuyển hướng đến trang xóa với id của sách
-                                                        window.location.href = "DeleteAccount?id=" + UserId;
+                                                </td>
+                                                <td class="image">
+                                                    @if (!string.IsNullOrEmpty(user.Avatar))
+                                                    {
+                                                        <img src="@Url.Content(user.Avatar)" width="100px">
                                                     }
+                                                    else
+                                                    {
+                                                        <span class="text-danger">Chưa có</span>
+                                                    }
+                                                </td>
+                                                <td class="Address">
+                                                    @if (string.IsNullOrEmpty(user.Address))
+                                                    {
+                                                        <span class="text-danger">Chưa có</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @user.Address
+                                                    }
+                                                </td>
+                                                <td class="Phone">
+                                                    @if (string.IsNullOrEmpty(user.Phone))
+                                                    {
+                                                        <span class="text-danger">Chưa có</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @user.Phone
+                                                    }
+                                                </td>
+                                                <td class="Email">
+                                                    @if (string.IsNullOrEmpty(user.Email))
+                                                    {
+                                                        <span class="text-danger">Chưa có</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @user.Email
+                                                    }
+                                                </td>
+                                                <td class="Role">
+                                                    @if (string.IsNullOrEmpty(user.RoleName))
+                                                    {
+                                                        <span class="text-danger">Chưa có</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @user.RoleName
+                                                    }
+                                                </td>
+                                                <td class="Active">
+                                                    @if (user.Active)
+                                                    {
+                                                        <span class="text-success">Hoạt động</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-danger">Không hoạt động</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                       }
+                                    <script>
+                                        async function confirmDelete(UserId, isActive) {
+                                            const action = isActive ? "deactivate" : "activate";
+                                            const message = isActive
+                                                ? "Bạn có muốn vô hiệu hóa người dùng này?"
+                                                : "Bạn có muốn kích hoạt lại người dùng này?";
+
+                                            if (confirm(message)) {
+                                                try {
+                                                    const response = await fetch(`https://localhost:7186/api/Users/${UserId}/${action}`, {
+                                                        method: "PUT",
+                                                        headers: { "Content-Type": "application/json" }
+                                                    });
+
+                                                    if (response.ok) {
+                                                        alert(`Người dùng đã được ${isActive ? "vô hiệu hóa" : "kích hoạt"} thành công!`);
+                                                        location.reload();
+                                                    } else {
+                                                        alert("Lỗi khi cập nhật trạng thái người dùng!");
+                                                    }
+                                                } catch (error) {
+                                                    alert("Lỗi kết nối đến server!");
+                                                    console.error("Lỗi:", error);
                                                 }
-                                            </script>
+                                            }
+                                        }
+                                    </script>
+                                    <script>
+                                        async function confirmUpdateRole(UserId, RoleId) {
+                                            const isAdmin = RoleId === 0; 
+                                            const newRole = isAdmin ? "User" : "Admin";
+                                            const apiUrl = isAdmin
+                                                ? `https://localhost:7186/api/Users/${UserId}/updaetroleuser`
+                                                : `https://localhost:7186/api/Users/${UserId}/updaetroleadmin`;
+
+                                            if (confirm(`Bạn có muốn chuyển người dùng này thành ${newRole}?`)) {
+                                                try {
+                                                    const response = await fetch(apiUrl, {
+                                                        method: "PUT",
+                                                        headers: { "Content-Type": "application/json" }
+                                                    });
+
+                                                    if (response.ok) {
+                                                        alert(`Người dùng đã được chuyển thành ${newRole} thành công!`);
+                                                        location.reload();
+                                                    } else {
+                                                        alert("Lỗi khi cập nhật quyền người dùng!");
+                                                    }
+                                                } catch (error) {
+                                                    alert("Lỗi kết nối đến server!");
+                                                    console.error("Lỗi:", error);
+                                                }
+                                            }
+                                        }
+                                    </script>
                                         </tbody>
                                     </table>
                                 </div>

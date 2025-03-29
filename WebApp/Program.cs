@@ -1,4 +1,4 @@
-using API.Models;
+﻿using API.Models;
 using WebApp.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +23,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 app.UseSession();
 app.MapGet("/", () => Results.Redirect("/Homepage"));
