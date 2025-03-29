@@ -126,5 +126,10 @@ namespace API.Repositories
                 RateTime = rateTime
             };
         }
+
+        public void RateBook(int point, int bookId, int userId)
+        {
+            _bookDao.RateBook(point, bookId, userId);
+        }
     }
 }

@@ -14,7 +14,23 @@ namespace API.Controllers
         {
             _reportRepository = reportRepository;
         }
+        [HttpGet]
+        public IActionResult GetAllReports()
+        {
+            var reports = _reportRepository.GetAllReports();
+            return Ok(reports);
+        }
 
+        [HttpPut("status")]
+        public IActionResult UpdateReportStatus([FromBody] UpdateReportRequest request)
+        {
+            var success = _reportRepository.UpdateReportStatus(request);
+            if (!success)
+            {
+                return NotFound("Report not found.");
+            }
+            return Ok(new { success = true, message = "Report status updated successfully." });
+        }
         [HttpGet("{bookId}")]
         public IActionResult GetReportFormData(int bookId)
         {
