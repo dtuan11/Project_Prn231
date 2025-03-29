@@ -51,7 +51,7 @@ namespace API.Controllers
 
         // PUT: api/users/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromForm] UserUpdateRequest request)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateRequest request)
         {
             var user = (await _userRepository.GetUserByIdAsync(id)).User;
             if (user == null)

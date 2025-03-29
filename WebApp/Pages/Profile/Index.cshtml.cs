@@ -1,80 +1,109 @@
-﻿using API.DTO.Response;
+﻿using API.Controllers;
+using API.DTO.Response;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace WebApp.Pages.Profile
 {
     public class IndexModel : PageModel
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
 
-        public IndexModel(IHttpClientFactory httpClientFactory)
+
+        public IndexModel(HttpClient httpClient)
         {
-            _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://localhost:7186");
         }
 
-        public List<Category> Categories { get; set; } = new List<Category>();
-        public string? AccountId { get; set; }
-        public ProfileResponse ProfileModel { get; set; } = new ProfileResponse();
+        public List<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
+        public string? UserId { get; set; } = default!;
+        [BindProperty]
+        public User UserModel { get; set; } = default!;
+        [BindProperty]
+        public IFormFile File { get; set; }
         public List<ReadingResponse> Readings { get; set; } = new List<ReadingResponse>();
+        public User user { get; set; }
+
         public string Message { get; set; } = string.Empty;
 
         public async Task OnGetAsync(int id)
-        {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri("https://localhost:7186/"); 
+        {         
 
-            AccountId = HttpContext.Session.GetString("userId");
+            var categoriesResponse = await _httpClient.GetAsync("api/categories");
+            if (categoriesResponse.IsSuccessStatusCode)
+            {
+                Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();
+            }
+            UserId = HttpContext.Session.GetString("userId");
+            var readingResponse = await _httpClient.GetAsync("api/Profile/"+UserId+"/readings");
+            if (readingResponse.IsSuccessStatusCode)
+            {
+                Readings = await readingResponse.Content.ReadFromJsonAsync<List<ReadingResponse>>();
+            }
+            var userResponse = await _httpClient.GetAsync("userDetail/" + int.Parse(UserId));
+            if (userResponse.IsSuccessStatusCode)
+            {
+                user = await userResponse.Content.ReadFromJsonAsync<User>();
+            }
 
-            Categories = await client.GetFromJsonAsync<List<Category>>("api/profile/categories") ?? new List<Category>();
-            ProfileModel = await client.GetFromJsonAsync<ProfileResponse>($"api/profile/{id}") ?? new ProfileResponse();
-            Readings = await client.GetFromJsonAsync<List<ReadingResponse>>($"api/profile/{id}/readings") ?? new List<ReadingResponse>();
+            
+            if (user != null)
+            {
+                UserModel = user;
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri("https://localhost:7186/");
-
-            var form = await Request.ReadFormAsync();
-            var accountId = int.Parse(form["userId"].ToString());
-
-            var content = new MultipartFormDataContent
+            string newPassword = Request.Form["newPassword"];
+            string currentPassword = Request.Form["currentPassword"];
+            if (currentPassword != null)
             {
-                { new StringContent(accountId.ToString()), "AccountId" },
-                { new StringContent(form["email"]), "Email" },
-                { new StringContent(form["address"]), "Address" },
-                { new StringContent(form["phone"]), "Phone" }
+                currentPassword = HashPassword(currentPassword);
+            }
+            string confirmPassword = Request.Form["confirmPassword"];
+            string userId = Request.Form["userId"];
+            var userResponse = await _httpClient.GetAsync("userDetail/" + int.Parse(userId));
+            if (userResponse.IsSuccessStatusCode)
+            {
+                user = await userResponse.Content.ReadFromJsonAsync<User>();
+            }
+            var request = new UserUpdateRequest
+            {
+                CurrentPassword = currentPassword,
+                NewPassword = newPassword,
+                ConfirmPassword = confirmPassword,
+                Email = user.Email,
+                Address = user.Address,
+                Phone = user.Phone,
+
+                
             };
+            var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            var res = await _httpClient.PutAsync("api/users/"+user.UserId, jsonContent);
 
-            if (!string.IsNullOrEmpty(form["newPassword"]))
+            return RedirectToPage("/Profile/Index", new { id = user.UserId });
+        }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
             {
-                content.Add(new StringContent(form["currentPassword"]), "CurrentPassword");
-                content.Add(new StringContent(form["newPassword"]), "NewPassword");
-                content.Add(new StringContent(form["confirmPassword"]), "ConfirmPassword");
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
             }
-
-            if (Request.Form.Files["File"] != null)
-            {
-                var file = Request.Form.Files["File"];
-                content.Add(new StreamContent(file.OpenReadStream()), "AvatarFile", file.FileName);
-            }
-
-            var response = await client.PutAsync("api/profile", content);
-            var result = await response.Content.ReadFromJsonAsync<ProfileResponse>();
-
-            Message = result?.Message ?? "An error occurred";
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToPage("/Profile/Index", new { id = accountId });
-            }
-
-            await OnGetAsync(accountId);
-            return Page();
         }
     }
 }
