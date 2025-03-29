@@ -24,7 +24,7 @@ namespace WebApp.Pages.Homepage
         {
             UserId = HttpContext.Session.GetString("userId");
             // Fetch categories
-            var categoriesResponse = await _httpClient.GetAsync("api/categories");
+            var categoriesResponse = await _httpClient.GetAsync("api/books/categories");
             if (categoriesResponse.IsSuccessStatusCode)
             {
                 Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();
