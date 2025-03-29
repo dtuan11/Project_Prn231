@@ -1,3 +1,4 @@
+using API.DTO.Response;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,29 +8,43 @@ namespace WebApp.Pages.Profile
 {
     public class ViewStatisticModel : PageModel
     {
-        private readonly PRN221_Project_1Context context;
+        private readonly HttpClient _httpClient;
 
-        public ViewStatisticModel(PRN221_Project_1Context context)
+        public ViewStatisticModel(HttpClient httpClient)
         {
-            this.context = context;
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://localhost:7186");
         }
+
         public List<string> Titles { get; set; } = new List<string>();
         public List<int> ViewCounts { get; set; } = new List<int>();
-        public List<Category> Categories { get; set; } = new List<Category>();
+        public List<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
         public string? UserId { get; set; } = default!;
-        public User user { get; set; }
-        public void OnGet()
+        public User user { get; set; } = default!;
+        public async Task OnGet()
         {
-            Categories = context.Categories.ToList();
+            var categoriesResponse = await _httpClient.GetAsync("api/categories");
+            if (categoriesResponse.IsSuccessStatusCode)
+            {
+                Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();
+            }
             UserId = HttpContext.Session.GetString("userId");
-            var books =  context.Books
-           .Where(b => b.Views.HasValue && b.Views != 0)
-           .Select(b => new { b.Title, b.Views })
-           .ToList();
+            var bookViewsResponse = await _httpClient.GetAsync("api/Statics/bookviews");
+            if (bookViewsResponse.IsSuccessStatusCode)
+            {
+                var books = await bookViewsResponse.Content.ReadFromJsonAsync<List<ViewStaticsResponse>>();
+                Titles = books.Select(b => b.Title).ToList();
+                ViewCounts = books.Select(b => b.Views).ToList();
+                
+            }
+            var userResponse = await _httpClient.GetAsync("userDetail/" + int.Parse(UserId));
+            if (userResponse.IsSuccessStatusCode)
+            {
+                user = await userResponse.Content.ReadFromJsonAsync<User>();
+            }
 
-            Titles = books.Select(b => b.Title).ToList();
-            ViewCounts = books.Select(b => b.Views.Value).ToList();
-            user = context.Users.FirstOrDefault(x => x.UserId == int.Parse(UserId));
+
+
         }
     }
 }

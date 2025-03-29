@@ -1,4 +1,5 @@
-﻿@page
+﻿﻿
+@page
 @model WebApp.Pages.Profile.IndexModel
 @{
     Layout = null;
@@ -214,6 +215,15 @@
                     </a>
                 </li>
             }
+            @if (Model.user.RoleId == 0)
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-page="/Report/Index">
+                        <i class="bi bi-envelope"></i>
+                        <span>Quản lý phản hồi người dùng</span>
+                    </a>
+                </li>
+            }
             @{
                 if(Model.UserModel.RoleId == 0)
                 {
@@ -409,11 +419,12 @@
                                                     
                                                 
                                                 <tr>
-                                                    <td>@read.Book.Title</td>
-                                                    <td><img style="width:100px; height:100px;" src="@read.Book.Img" alt="alt" /></td>
-                                                    <td><a asp-page="/Homepage/Chapter" 
-                                                    asp-route-id="@read.Chapter.ChapterId" 
-                                                    asp-route-bookId="@read.Book.BookId">@read.Chapter.ChapterName</a></td>
+                                                        <td>@read.BookTitle</td>
+                                                        <td><img style="width:100px; height:100px;" src="@read.BookImage" alt="alt" /></td>
+                                                    <td><a asp-page="/Homepage/Chapter"
+                                                               asp-route-id="@read.ChapterId"
+                                                               asp-route-bookId="@read.BookId">@read.ChapterName</a>
+                                                        </td>
                                                     <td>@read.ReadingDate</td>
                                                 </tr>
 

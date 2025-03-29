@@ -42,7 +42,7 @@ namespace WebApp.Pages.Homepage
             }
 
             // Fetch categories
-            var categoriesResponse = await _httpClient.GetAsync("api/books/categories");
+            var categoriesResponse = await _httpClient.GetAsync("api/categories");
             if (categoriesResponse.IsSuccessStatusCode)
             {
                 Categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryResponse>>();

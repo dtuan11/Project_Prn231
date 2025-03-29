@@ -2,7 +2,6 @@
 @model WebApp.Pages.Account.ManagerAccountModel
 @{
     Layout = null;
-
 }
 
 <!DOCTYPE html>
@@ -226,6 +225,15 @@
                     <a class="nav-link collapsed" asp-page="/Account/ManagerAccount">
                         <i class="bi bi-envelope"></i>
                         <span>Quản lý Tài Khoản</span>
+                    </a>
+                </li>
+            }
+            @if (Model.user.RoleId == 0)
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-page="/Report/Index">
+                        <i class="bi bi-envelope"></i>
+                        <span>Quản lý phản hồi người dùng</span>
                     </a>
                 </li>
             }
