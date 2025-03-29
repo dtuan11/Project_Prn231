@@ -37,13 +37,13 @@
                     <h2 class="title">Send FeedBack</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post" onsubmit="return validateForm()">
+                    <form id="report-form" onsubmit="submitReport(event)">
                         <div class="form-row">
                             <div class="name">Book Name</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input value="@Model.Book.Title" class="input--style-5" type="text" name="bookName" readonly="" />
-                                    <input hidden value="@Model.Book.BookId" class="input--style-5" type="text" name="bookId" readonly="" />
+                                    <input id="book-name" class="input--style-5" type="text" name="bookName" readonly />
+                                    <input id="book-id" hidden class="input--style-5" type="text" name="bookId" readonly value="@Model.BookId" />
                                 </div>
                             </div>
                         </div>
@@ -52,23 +52,17 @@
                             <div class="value">
                                 <div class="input-group">
                                     <div class="rs-select2 js-select-simple select--no-search">
-                                        <select name="report" required="">
-                                            @foreach (var reportTypes in Model.ReportTypes)
-                                            {
-                                                <option value="@reportTypes">@reportTypes</option>
-                                            }
-                                        </select>
+                                        <select id="report-type" name="report" required></select>
                                         <div class="select-dropdown"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Chapter Field -->
                         <div class="form-row">
                             <div class="name">Chapter</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="number" name="chapter" min="1" required>
+                                    <input id="chapter" class="input--style-5" type="number" name="chapter" min="1" required>
                                 </div>
                             </div>
                         </div>
@@ -76,60 +70,104 @@
                             <div class="name">Description</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <textarea style="background-color: #e5e5e5" id="description" name="description" rows="5" cols="10" minlength="10"
-                                              maxlength="100" required></textarea>
+                                    <textarea id="description" style="background-color: #e5e5e5" name="description" rows="5" cols="10" minlength="10" maxlength="100" required></textarea>
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <button style="background-color: red;margin-left:10%; color: white" class="btn btn--radius-2 btn--red" type="submit">Send</button>
-                            <button style="background-color: red;margin-left:40%; color: white" class="btn btn--radius-2 btn--red" type="reset">Cancel</button>
+                            <button style="background-color: red; margin-left:10%; color: white" class="btn btn--radius-2 btn--red" type="submit">Send</button>
+                            <button style="background-color: red; margin-left:40%; color: white" class="btn btn--radius-2 btn--red" type="reset">Cancel</button>
                         </div>
                     </form>
-                    @*  <script>
-                        function validateForm() {
-                            var detail = document.getElementById("description").value.trim();
+                    
+                    <script>
+                        const bookId = @Model.BookId;
+                        const userId = '@Model.UserId' || null;
 
-                            if (detail === "") {
-                                alert("Please fill out all required fields.");
-                                return false;
-                            } else {
-                                alert("Send FeedBack Successfull !!.");
-                                // window.location.href = '/Homepage/Index';
-                                return true;
+                        async function fetchReportFormData(bookId) {
+                            try {
+                                const response = await fetch(`https://localhost:7186/api/reports/${bookId}`);
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status}`);
+                                }
+                                const data = await response.json();
+                                renderFormData(data);
+                            } catch (error) {
+                                console.error('Error fetching report form data:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to load report form data.'
+                                });
                             }
                         }
-                    </script>  *@
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                        @if (TempData["SuccessMessage"] != null)
-                        {
-                            <text>
+
+                        function renderFormData(data) {
+                            document.getElementById('book-name').value = data.bookTitle;
+                            const reportTypeSelect = document.getElementById('report-type');
+                            reportTypeSelect.innerHTML = '';
+                            data.reportTypes.forEach(type => {
+                                const option = document.createElement('option');
+                                option.value = type;
+                                option.textContent = type;
+                                reportTypeSelect.appendChild(option);
+                            });
+                        }
+
+                        async function submitReport(event) {
+                            event.preventDefault();
+                            const reportData = {
+                                bookId: parseInt(document.getElementById('book-id').value),
+                                reportType: document.getElementById('report-type').value,
+                                chapter: parseInt(document.getElementById('chapter').value),
+                                description: document.getElementById('description').value,
+                                userId: userId ? parseInt(userId) : null
+                            };
+
+                            try {
+                                const response = await fetch('https://localhost:7186/api/reports', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(reportData)
+                                });
+
+                                const result = await response.json();
+                                if (result.success) {
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Success',
-                                        text: '@TempData["SuccessMessage"]'
+                                        text: result.message
+                                    }).then(() => {
+                                        window.location.href = `/Homepage/BookDetail?id=${bookId}`;
                                     });
-                            </text>
-                        }
-                        else if (TempData["ErrorMessage"] != null)
-                        {
-                            <text>
+                                } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Cooldown Active',
-                                        text: '@TempData["ErrorMessage"]'
+                                        title: 'Error',
+                                        text: result.message
                                     });
-                            </text>
+                                }
+                            } catch (error) {
+                                console.error('Error submitting report:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to submit report.'
+                                });
+                            }
                         }
-                            });
+
+                        // Load form data on page load
+                        fetchReportFormData(bookId);
                     </script>
 
                 </div>
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Jquery JS-->
     <script src="~/css/vendor/jquery/jquery.min.js"></script>

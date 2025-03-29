@@ -26,13 +26,23 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IBookDao, BookDAO>();
 builder.Services.AddScoped<IChapterDao, ChapterDAO>();
 builder.Services.AddScoped<UserDAO>();
+<<<<<<< HEAD
 builder.Services.AddScoped<IProfileDao, ProfileDao>();
+=======
+builder.Services.AddScoped<ICategoryDao, CategoryDAO>();
+builder.Services.AddScoped<IReportDao, ReportDao>();
+>>>>>>> origin/dev
 
 // Register Repositories
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+<<<<<<< HEAD
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+=======
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+>>>>>>> origin/dev
 
 
 // Swagger/OpenAPI
