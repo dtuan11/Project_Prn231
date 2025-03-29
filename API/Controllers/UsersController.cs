@@ -61,52 +61,53 @@ namespace API.Controllers
         }
 
         // PUT: api/users/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateRequest request)
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest request)
         {
-            var user = (await _userRepository.GetUserByIdAsync(id)).User;
+            var user = (await _userRepository.GetUserById(request.Id));
             if (user == null)
             {
                 return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(request.NewPassword))
-            {
-                var currentPasswordHash = HashPassword(request.CurrentPassword);
-                if (!currentPasswordHash.Equals(user.Password))
-                {
-                    return BadRequest("Current password is incorrect.");
-                }
+            //if (!string.IsNullOrEmpty(request.NewPassword))
+            //{
+            //    var currentPasswordHash = HashPassword(request.CurrentPassword);
+            //    if (!currentPasswordHash.Equals(user.Password))
+            //    {
+            //        return BadRequest("Current password is incorrect.");
+            //    }
 
-                if (request.NewPassword != request.ConfirmPassword)
-                {
-                    return BadRequest("New password and confirmation do not match.");
-                }
+            //    if (request.NewPassword != request.ConfirmPassword)
+            //    {
+            //        return BadRequest("New password and confirmation do not match.");
+            //    }
 
-                user.Password = HashPassword(request.NewPassword);
-            }
+            //    user.Password = HashPassword(request.NewPassword);
+            //}
 
-            if (request.File != null)
-            {
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
+            //if (request.File != null)
+            //{
+            //    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+            //    if (!Directory.Exists(folderPath))
+            //    {
+            //        Directory.CreateDirectory(folderPath);
+            //    }
 
-                var filePath = Path.Combine(folderPath, request.File.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await request.File.CopyToAsync(stream);
-                }
+            //    var filePath = Path.Combine(folderPath, request.File.FileName);
+            //    using (var stream = new FileStream(filePath, FileMode.Create))
+            //    {
+            //        await request.File.CopyToAsync(stream);
+            //    }
 
-                user.Avatar = "/images/" + request.File.FileName;
-            }
+            //    user.Avatar = "/images/" + request.File.FileName;
+            //}
 
             user.Email = request.Email;
             user.Address = request.Address;
             user.Phone = request.Phone;
-
+            user.Password = request.Password;
+            //user.Avatar = request.Avatar;
             await _userRepository.UpdateUserAsync(user);
             return Ok(user);
         }
@@ -144,12 +145,13 @@ namespace API.Controllers
 
     public class UserUpdateRequest
     {
-        public string CurrentPassword { get; set; }
-        public string NewPassword { get; set; }
-        public string ConfirmPassword { get; set; }
+        public int Id { get; set; }
+        public string Password { get; set; }
+        
         public string Email { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public IFormFile File { get; set; }
+        //public string Avatar { get; set; }
+        //public IFormFile File { get; set; }
     }
 }
